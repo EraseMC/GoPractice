@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log/slog"
 	"os"
 
+	"github.com/EraseMC/GoPractice/internal/app"
 	"github.com/EraseMC/GoPractice/internal/config"
 	"github.com/EraseMC/GoPractice/internal/netver"
 	"github.com/EraseMC/GoPractice/internal/worlds"
@@ -17,7 +19,18 @@ func main() {
 	chat.Global.Subscribe(chat.StdoutSubscriber{})
 
 	path := flag.String("config", "config.toml", "config path")
+	envPath := flag.String("env", ".env", "env path")
+	demo := flag.Bool("demo", false, "send test form and scoreboard on join")
 	flag.Parse()
+
+	ctx := context.Background()
+	a, err := app.New(ctx, log, *envPath)
+	if err != nil {
+		log.Error("start practice", "err", err)
+		os.Exit(1)
+	}
+	defer a.Close()
+
 	uc, err := config.Load(*path)
 	if err != nil {
 		log.Error("load config", "err", err)
@@ -38,6 +51,10 @@ func main() {
 	conf.WorldProvider = lobby.Provider()
 	conf.Generator = func(world.Dimension) world.Generator { return world.NopGenerator{} }
 	conf.AcceptedProtocolsProvider = netver.Provider(netver.DefaultBlocked)
+	a.Configure(&conf)
+	if *demo {
+		installDemo(a)
+	}
 
 	srv := conf.New()
 	srv.CloseOnProgramEnd()
@@ -45,8 +62,10 @@ func main() {
 	w.SetTime(1000)
 	w.StopTime()
 
+	a.Start(ctx)
 	srv.Listen()
 	for p := range srv.Accept() {
+		a.Join(p, p.Tx())
 		log.Info("player joined", "name", p.Name())
 	}
 }

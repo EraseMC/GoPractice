@@ -1,0 +1,664 @@
+[defaults]
+messages = "Unknown message"
+ban = "Unknown message"
+ban_first = "Unknown message"
+cape = "-"
+cape_colored = "-"
+language = "Unknown message"
+input_mode = "Unknown message"
+anticheat = "Unknown message"
+potion_color = "-"
+potion_color_colored = "§7-"
+
+[messages]
+commandNotFoundOrNoPermission = "§cUnknown command: %s. Please check that the command exists and that you have permission to use it."
+commandOnlyConsole = "§cCommand can be executed only from console!"
+chatCooldown = "§cDon't flood or spam!"
+commandCooldown = "§cDon't spam commands!"
+chatLongMessage = "§cYour message is too long!"
+joinMessage = "§fWelcome to the §l§aOldtralia Network§r§f!\nCurrent online: §a%s\n§fWebsite: §aoldtralia.ru"
+languageAlreadySelected = "§cYou have already English language selected!"
+languageSuccessfullySelected = "§aYou have selected English language!"
+featureInDevelopment = "§cThis feature is still in development!"
+playerNotFound = "§cPlayer not found!"
+playerNotRegistered = "§cPlayer is not registered!"
+rankUsage = "§eUsage: /rank <Player> <Rank>"
+rankNotFound = "§cRank not found!"
+rankCannotBeSet = "§cYou can't set this rank!"
+rankSelf = "§cYou can't change your own rank!"
+rankCannotBeChanged = "§cYou can't change this player's rank!"
+rankAlreadySet = "§cPlayer already have this rank!"
+rankChanged = "§a%s's rank has been changed to %s!"
+rankChangedAnother = "§aYour rank has been changed to %s!"
+pingSelf = "§aYour ping: §e%sms"
+pingAnother = "§e%s§a's ping: §e%sms"
+platformSelf = "§aYour platform: §e%s (%s)"
+platformAnother = "§e%s§a's platform: §e%s (%s)"
+tellUsage = "§eUsage: /tell <Player> <Message>"
+tellSelfError = "§cYou can't send a message to yourself!"
+tellSelf = "§eYour message to §a%s§e: %s"
+tellAnother = "§eMessage from §a%s§e: %s"
+replyUsage = "§eUsage: /reply <Message>"
+replyNoOneTo = "§cYou have no one to reply!"
+replySelf = "§eYour reply to §a%s§e: %s"
+replyAnother = "§eReply from §a%s§e: %s"
+scoreboardEnabled = "§aYou have successfully enabled scoreboard!"
+scoreboardDisabled = "§cYou have successfully disabled scoreboard!"
+cpsEnabled = "§aYou have successfully enabled clicks per second counter!"
+cpsDisabled = "§cYou have successfully disabled clicks per second counter!"
+autosprintEnabled = "§aYou have successfully enabled auto-sprint!"
+autosprintDisabled = "§cYou have successfully disabled auto-sprint!"
+hidePlayersEnabled = "§aYou have successfully enabled hiding players in combat!"
+hidePlayersDisabled = "§cYou have successfully disabled hiding players in combat!"
+arenaRespawnEnabled = "§aYou have successfully enabled arena respawn!"
+arenaRespawnDisabled = "§cYou have successfully disabled arena respawn!"
+lightningEnabled = "§aYou have successfully enabled lightning kill!"
+lightningDisabled = "§cYou have successfully disabled lightning kill!"
+enderPearlCooldownStarted = "§cCooldown started"
+enderPearlCooldownEnded = "§aCooldown ended"
+enderPearlCooldownOngoing = "§cYou're on cooldown for %s seconds"
+muteExpiry = "%s days, %s hours, %s minutes"
+muteNeverExpires = "never"
+muteMessage = "§cYou have been muted! §7(%s, %s)\n§fReason: §c%s §7| §fUnmute: §c%s"
+banUsage = "§eUsage: /ban <Player> <Time §7(in days, 0 - forever)§e> <Reason>"
+invalidBanTime = "§cInvalid ban time format!"
+playerCannotBeBanned = "§cYou can't ban this player!"
+playerAlreadyBanned = "§cPlayer is already banned!"
+successfulBan = "§aYou have successfully banned %s for %s days with reason: %s"
+successfulForeverBan = "§aYou have permanently banned %s with reason: %s"
+muteUsage = "§eUsage: /mute <Player> <Time §7(in days, 0 - forever)§e> <Reason>"
+invalidMuteTime = "§cInvalid mute time format!"
+playerCannotBeMuted = "§cYou can't mute this player!"
+playerAlreadyMuted = "§cPlayer is already muted!"
+successfulMute = "§aYou have successfully muted %s for %s days with reason: %s"
+successfulForeverMute = "§aYou have permanently muted %s with reason: %s"
+kickUsage = "§eUsage: /kick <Player> <Reason>"
+playerCannotBeKicked = "§cYou can't kick this player!"
+successfulKick = "§aYou have successfully kicked %s with reason: %s"
+kickMessage = "§cYou have been kicked! §7(%s, %s)\n\n§fReason: §c%s"
+selfBan = "§cYou can't ban yourself!"
+selfMute = "§cYou can't mute yourself!"
+selfKick = "§cYou can't kick yourself!"
+unbanUsage = "§eUsage: /unban <Player>"
+unmuteUsage = "§eUsage: /unmute <Player>"
+unmuteSelf = "§cYou can't unmute yourself!"
+playerNotBanned = "§cPlayer is not banned!"
+playerNotMuted = "§cPlayer is not muted!"
+successfulUnban = "§aYou have successfully unbanned: %s"
+successfulUnmute = "§aYou have successfully unmuted: %s"
+reportUsage = "§eUsage: /report <Player> <Reason>"
+reportSelf = "§cYou can't report yourself!"
+playerCannotBeReported = "§cYou can't report this player!"
+successfulReport = "§aYou have successfully reported §e%s §awith reason: §e%s"
+clearedChat = "§eChat have been cleared!"
+clearChatSuccess = "§aYou have successfully cleared the chat!"
+emojiSuccess = "§eAvailable emoji: §a (:skull:),  (:fire:),  (:eyes:),  (:clown:),  (:100:),  (:laugh:),  (:heart:)"
+crashUsage = "§eUsage: /crash <Player> <Type>"
+crashSelf = "§cYou can't crash yourself!"
+playerCannotBeCrashed = "§cYou can't crash this player!"
+crashProcessing = "§eCrash is being processed... §7(%s)"
+crashTypeNotFound = "§cUnknown crash type!"
+listSuccess = "§eThere are §a%s §eplayers online:\n§a%s"
+cosmeticsNoPermission = "§cCosmetics are available from rank §l§2Wayner§r §cand above!"
+tagsNoPermission = "§cTags are available from rank §l§2Wayner§r §cand above!"
+goldenTagsNoPermission = "§cGolden tags are available from rank §l§5Mystery§r §cand above!"
+platinumTagsNoPermission = "§cPlatinum tags are available from rank §l§aGangster§r §cand above!"
+tagAlreadySelected = "§cYou have already selected this tag!"
+tagEnabled = "§aSelected tag: %s"
+tagDisabled = "§cYou have successfully disabled tag!"
+tagDoesNotSet = "§cYou don't have tag enabled!"
+capesNoPermission = "§cCapes are available from rank §l§5Mystery§r §cand above!"
+capeAlreadySelected = "§cYou have already selected this cape!"
+capeEnabled = "§aSelected cape: %s"
+capeDisabled = "§cYou have successfully disabled cape!"
+capeDoesNotSet = "§cYou don't have cape enabled!"
+flyNoPermission = "§cFly is available from rank §l§2Wayner§r §cand above!"
+flyAlreadyEnabled = "§cYou have already fly enabled!"
+flyAlreadyDisabled = "§cYou don't have fly enabled!"
+flyEnabled = "§aYou have successfully enabled fly!"
+flyDisabled = "§cYou have successfully disabled fly!"
+flyEnabledForForm = "§aenabled"
+capybaraEnabledForForm = "§aenabled"
+flyDisabledForForm = "§cdisabled"
+capybaraDisabledForForm = "§cdisabled"
+capybaraNoPermission = "§cCapybara is available from rank §l§aGangster§r §cand above!"
+capybaraAlreadyEnabled = "§cYou have already capybara enabled!"
+capybaraAlreadyDisabled = "§cYou don't have capybara enabled!"
+capybaraEnabled = "§aYou have successfully enabled capybara!"
+capybaraDisabled = "§cYou have successfully disabled capybara!"
+potionColorNoPermission = "§cPotion color is available from rank §l§aGangster§r §cand above!"
+potionColorAlreadySelected = "§cYou have already selected this potion color!"
+potionColorAlreadyDisabled = "§cYou don't have potion color enabled!"
+potionColorEnabled = "§aSelected potion color: %s"
+potionColorDisabled = "§cYou have successfully disabled potion color!"
+spectateUsage = "§eUsage: /spectate <Player|quit>"
+notSpectator = "§cYou are not in spectator mode!"
+spectateSelf = "§cYou can't spectate yourself!"
+playerCannotBeSpectated = "§cYou can't spectate this player!"
+spectateAnotherSpectator = "§cYou can't spectate another spectator!"
+alreadySpectator = "§cYou are already spectating another player!"
+alreadyBeingSpectated = "§cYou are already being spectated!"
+playerAlreadySpectated = "§cPlayer is already being spectated!"
+spectateNotInHub = "§cYou can't spectate while being not in hub!"
+spectateSuccess = "§eYou are spectating over §a%s §e(%sms)"
+spectatorSuccessfulTeleport = "§aYou have teleported to your suspect!"
+spectatorSuccessfulFreeze = "§aYou have froze your suspect!"
+frozenBySpectator = "§eYou have been frozen by spectator!"
+spectatorSuccessfulUnfreeze = "§cYou have unfroze your suspect!"
+spectatorSuccessfulQuit = "§aYou have successfully quit from spectator mode!"
+spectatorSuspectHadQuit = "§cYour suspect have left the server!"
+spectatorActionBar = "§fSuspect: §e%s\n§fPing: §e%sms §7| §fReach: §e%s §7| §fCPS: §e%s\n§fOS: §e%s (%s)"
+teleportedToSpawn = "§aTeleporting to spawn!"
+noSpawnInCombat = "§cYou can't teleport to spawn in combat!"
+noSpawnInDuel = "§cYou can't teleport to spawn during a duel!"
+noSpawnInRespawnDelay = "§cYou can't teleport to spawn while respawning!"
+noSpawnInSpectator = "§cYou can't teleport to spawn in spectator mode!"
+noReKitInCombat = "§cYou can't re-kit in combat!"
+noReKitInRespawnDelay = "§cYou can't re-kit while respawning!"
+successfulReKit = "§aYou have been successfully re-kitted!"
+notInFFA = "§cYou are not in FFA!"
+notInFFAOrDuel = "§cYou are not in FFA or duel!"
+joinedFFA = "§aYou have joined %s FFA!"
+ffaSelfInCombat = "§cYou are in combat with %s"
+ffaPlayerInCombat = "§c%s is in combat with %s"
+ffaYouAreNowInCombat = "§cYou are now in combat with %s!"
+ffaCombatReduced = "§aYou are no longer in combat!"
+ffaNoDebuffKill = "§e%s §7[§c%s POTS§7] §fwas killed by §e%s §7[§c%s POTS§7] §7[§4%s HP§7]"
+ffaSoupKill = "§e%s §7[§c%s SOUPS§7] §fwas killed by §e%s §7[§c%s SOUPS§7] §7[§4%s HP§7]"
+ffaSumoKill = "§e%s §fwas killed by §e%s"
+ffaResistanceKill = "§e%s §fwas killed by §e%s"
+ffaFistKill = "§e%s §fwas killed by §e%s §7[§4%s HP§7]"
+ffaGAppleKill = "§e%s §fwas killed by §e%s §7[§4%s HP§7]"
+ffaComboKill = "§e%s §fwas killed by §e%s §7[§4%s HP§7]"
+playerRankChangedNotification = "§e%s had set %s's rank to %s"
+playerBanNotification = "§e%s was banned by %s %s with reason: %s"
+playerMuteNotification = "§e%s was muted by %s %s with reason: %s"
+playerUnbanNotification = "§e%s was unbanned by %s"
+playerUnmuteNotification = "§e%s was unmuted by %s"
+playerKickNotification = "§e%s was kicked by %s with reason: %s"
+playerReportNotification = "§e%s was reported by %s with reason: %s"
+clearedChatNotification = "§e%s has cleared the chat"
+serverRestartNotificationInMinutes = "§aServer will restart in §e%s §aminutes!"
+serverRestartNotificationInSeconds = "§aServer will restart in §e%s §aseconds!"
+disabledChatNotification = "§e%s has disabled the chat"
+enabledChatNotification = "§e%s has enabled the chat"
+gameModeUsage = "§eUsage: /gamemode <Game mode>"
+noGameModeInCombat = "§cYou can't change your game mode in combat!"
+noGameModeInSpectator = "§cYou can't change your game mode in spectator mode!"
+noGameModeInRespawnDelay = "§cYou can't change your game mode while respawning!"
+sameGameMode = "§cYou are already in this game mode!"
+unknownGameMode = "§cUnknown game mode!"
+gameModeChangedToSurvival = "§aYour game mode has been changed to survival!"
+gameModeChangedToCreative = "§aYour game mode has been changed to creative!"
+gameModeChangedToAdventure = "§aYour game mode has been changed to adventure!"
+gameModeChangedToSpectator = "§aYour game mode has been changed to spectator!"
+successfulReconnect = "§eReconnecting..."
+statusSuccess = "§eServer status:\n§fOnline: §e%s §7(%s registered)\n§fUptime: §e%s\n§fCurrent TPS: §e%s §g(%sPERCENT)\n§fAverage TPS: §e%s §g(%sPERCENT)\n§fMemory used: §e%s MB"
+profileCannotCheck = "§cYou can't check this player's profile!"
+profileYes = "§ayes"
+profileNo = "§cno"
+profileSelfOwner = "§eYour profile (§a%s§e):\n§fRank: %s\n§fIP: §e%s\n§fMuted: %s\n§fPing: §e%sms\n§fGame version: §e%s\n§fOS: §e%s (%s)\n§fModel: §e%s\n§fTime played: §e%s hours\n§fOther accounts: §e%s"
+profileSelf = "§eYour profile (§a%s§e):\n§fRank: %s\n§fMuted: %s\n§fPing: §e%sms\n§fGame version: §e%s\n§fOS: §e%s (%s)\n§fTime played: §e%s hours\n§fOther accounts: §e%s"
+profileOnlineOwner = "§a%s§e's profile:\n§fRank: %s\n§fIP: §e%s\n§fOnline: %s\n§fMuted: %s\n§fPing: §e%sms\n§fGame version: §e%s\n§fOS: §e%s (%s)\n§fModel: §e%s\n§fTime played: §e%s hours\n§fOther accounts: §e%s"
+profileOnline = "§a%s§e's profile:\n§fRank: %s\n§fOnline: %s\n§fMuted: %s\n§fPing: §e%sms\n§fGame version: §e%s\n§fOS: §e%s (%s)\n§fTime played: §e%s hours\n§fOther accounts: §e%s"
+profileOfflineOwner = "§a%s§e's profile:\n§fRank: %s\n§fIP: §e%s\n§fOnline: %s\n§fBanned: %s\n§fMuted: %s\n§fTime played: §e%s hours\n§fOther accounts: §e%s"
+profileOffline = "§a%s§e's profile:\n§fRank: %s\n§fOnline: %s\n§fBanned: %s\n§fMuted: %s\n§fTime played: §e%s hours\n§fOther accounts: §e%s"
+successfulSurrender = "§aYou have successfully surrendered!"
+notInCombat = "§cYou are not in combat!"
+chatNowDisabled = "§eChat is now disabled!"
+chatNowEnabled = "§eChat is now enabled!"
+disableChatSuccess = "§cYou have successfully disabled the chat!"
+enableChatSuccess = "§aYou have successfully enabled the chat!"
+chatCurrentlyDisabled = "§cChat is currently disabled!"
+duelCommandNotInHub = "§cYou are not in the hub!"
+duelCommandUsage = "§eUsage:\n§7- §e/duel invite <Player> [Mode]\n§7- §e/duel accept [Player]"
+duelCommandInviteUsage = "§eUsage: /duel invite <Player> [Mode]"
+duelCommandModeNotFound = "§cMode not found!"
+duelCommandTargetNotInHub = "§cPlayer is not in hub!"
+duelCommandSelf = "§cYou can't invite yourself to a duel!"
+duelCommandInviteAlreadySent = "§cYou have already invited this player!"
+duelCommandInviteSuccess = "§aYou have sent duel invite to §e%s §aon %s§a!"
+duelCommandInviteNotification = "§e%s §ahas invited you to a duel on %s§a!"
+duelCommandInviteNotFound = "§cYou have no duel invites!"
+duelCommandInviteAccepted = "§aYou have accepted §e%s§a's invite!"
+duelCommandInviteAcceptedBy = "§e%s §ahas accepted your duel request!"
+duelCommandInviteNotFoundFrom = "§cThis player hasn't invited you to a duel!"
+duelStarting = "§eDuel is starting!\n§fMode: %s\n§fOpponent: §e%s"
+duelStarted = "§aMatch started. Good luck!"
+duelEndedDefault = "§aMatch ended! Mode: %s §7(%s)\n§fWinner: §e%s §7[§c%s HP§7]\n§fLoser: §e%s"
+duelEndedNoDamage = "§aMatch ended! Mode: %s §7(%s)\n§fWinner: §e%s\n§fLoser: §e%s"
+duelEndedNoDebuff = "§aMatch ended! Mode: %s §7(%s)\n§fWinner: §e%s §7[§c%s POTS§7] §7[§c%s HP§7]\n§fLoser: §e%s §7[§c%s POTS§7]"
+duelEndedBoxing = "§aMatch ended! Mode: %s §7(%s)\n§fWinner: §e%s §7[§c%s hits§7]\n§fLoser: §e%s §7[§c%s hits§7]"
+duelEndedSoup = "§aMatch ended! Mode: %s §7(%s)\n§fWinner: §e%s §7[§c%s SOUPS§7] §7[§c%s HP§7]\n§fLoser: §e%s §7[§c%s SOUPS§7]"
+duelJoinedQueue = "§aYou have joined %s §aqueue!"
+duelLeftQueue = "§cYou have left the queue!"
+duelsItemLeaveQueue = "§r§cLeave\n§7Click to use"
+banCommandDescription = "Ban a player"
+clearChatCommandDescription = "Clear the chat"
+crashCommandDescription = "Crash player's client"
+duelCommandDescription = "Duel a player"
+emojiCommandDescription = "Emoji list"
+gameModeCommandDescription = "Change your game mode"
+infoCommandDescription = "Information about the server"
+listCommandDescription = "Online players list"
+kickCommandDescription = "Kick a player"
+muteCommandDescription = "Mute a player"
+pingCommandDescription = "Check your or another player's ping"
+platformCommandDescription = "Check your or another player's platform"
+profileCommandDescription = "Check your or another player's profile"
+rankCommandDescription = "Change player's rank"
+reconnectCommandDescription = "Reconnect to the server"
+reKitCommandDescription = "Get a new kit"
+replyCommandDescription = "Reply to player's message"
+reportCommandDescription = "Report a player"
+restartCommandDescription = "Restart the server"
+rulesCommandDescription = "Server's rules"
+sayCommandDescription = "Broadcast a message"
+settingsCommandDescription = "Open settings"
+spawnCommandDescription = "Teleport to spawn"
+spectateCommandDescription = "Spectate over player"
+statusCommandDescription = "Check the server status"
+surrenderCommandDescription = "Leave from a fight"
+tellCommandDescription = "Send a message to player"
+toggleChatCommandDescription = "Enable or disable the chat"
+unbanCommandDescription = "Unban a player"
+unmuteCommandDescription = "Unmute a player"
+broadcastNotification = [
+  "§aVisit our website: §eoldtralia.ru",
+  "§aVisit our Telegram channel: §et.me/oldtralia",
+]
+joinTitle = [
+  "§l§aOldtralia",
+  "§fHave a good game!",
+]
+ffaDeathTitle = [
+  "§l§cYOU DIED",
+  "§e%s",
+]
+serverRestartTitle = [
+  "§l§aRestart",
+  "%s",
+]
+gamesForm = [
+  "Games",
+  "§fYou can §aselect §fone of our games to play!",
+  "§2Free For All\n§8Playing: §e%s",
+]
+ffaForm = [
+  "Free For All",
+  "§cNoDebuff\n§8Playing: §e%s",
+  "§7Soup\n§8Playing: §e%s",
+  "§aSumo\n§8Playing: §e%s",
+  "§6Fist\n§8Playing: §e%s",
+  "§eGApple\n§8Playing: §e%s",
+  "§4Resistance\n§8Playing: §e%s",
+  "§bCombo\n§8Playing: §e%s",
+  "§8Go back\n§7Click to return",
+]
+duelsFormQueue = [
+  "Duels",
+  "%s\n§8Playing: §e%s §8| §8In-Queue: §e%s",
+]
+duelsFormInvite = [
+  "Duels (%s)",
+  "%s\n§8Click to select",
+]
+preferencesForm = [
+  "Preferences",
+  "Language\n§8Select a language",
+  "Toggles\n§8Enable or disable feature",
+  "Cosmetics\n§8Change your appearance",
+]
+languageForm = [
+  "Select a language",
+  "English\n§aSelected",
+  "Russian\n§8Click to select",
+  "Go back\n§8Click to return",
+]
+languageConfirmationForm = [
+  "Confirm language selection",
+  "§fDo you want to select §e%s §flanguage?",
+  "Yes",
+  "No",
+]
+togglesForm = [
+  "Toggles",
+  "General\n§8Change your general settings",
+  "Free For All\n§8Change your FFA settings",
+  "Go back\n§8Click to return",
+]
+generalTogglesForm = [
+  "General settings",
+  "Scoreboard",
+  "Clicks per second counter",
+  "Auto-sprint",
+]
+ffaTogglesForm = [
+  "Free For All settings",
+  "Hide players in combat",
+  "Arena respawn",
+  "Lightning kill",
+]
+cosmeticsForm = [
+  "Cosmetics",
+  "Capes\n§8Select your cape",
+  "Tags\n§8Select your tag",
+  "Fly\n§8Enable fly mode",
+  "Potion color\n§8Select your potion color",
+  "Capybara\n§8Enable capybara pet",
+  "Go back\n§8Click to return",
+]
+capesForm = [
+  "Capes",
+  "§fYour cape: §e%s",
+  "§8All capes\n§8Select a cape",
+  "§cRemove cape\n§8Remove your cape",
+  "§8Go back\n§8Click to return",
+]
+capesSelectionForm = [
+  "All capes",
+  "§aOldtralia\n§8Click to select",
+  "§4Lunarelly\n§8Click to select",
+  "§dBirthday\n§8Click to select",
+  "§bCake\n§8Click to select",
+  "§5Enderman\n§8Click to select",
+  "§6Firework\n§8Click to select",
+  "§8Iron Golem\n§8Click to select",
+  "§9Pickaxe\n§8Click to select",
+  "§2Green Creeper\n§8Click to select",
+  "§cRed Creeper\n§8Click to select",
+  "§2Turtle\n§8Click to select",
+  "§cMigrator\n§8Click to select",
+  "§8Go back\n§8Click to return",
+]
+tagsForm = [
+  "Tags",
+  "Your tag: %s",
+  "§fSilver tags\n§8Select a silver tag",
+  "§6Golden tags\n§8Select a golden tag",
+  "§bPlatinum tags\n§8Select a platinum tag",
+  "§cRemove tag\n§8Remove your tag",
+  "§8Go back\n§8Click to return",
+]
+silverTagsForm = [
+  "Silver tags",
+  "§dE-GIRL\n§8Click to select",
+  "§cBESTWW\n§8Click to select",
+  "§6GOD\n§8Click to select",
+  "§eLIT\n§8Click to select",
+  "§dLUNAR\n§8Click to select",
+  "§7STARDUST\n§8Click to select",
+  "§8CHOPPA\n§8Click to select",
+  "§fCLOUTLORD\n§8Click to select",
+  "§8Go back\n§8Click to return",
+]
+goldenTagsForm = [
+  "Golden tags",
+  "§aOLDTRALIA\n§8Click to select",
+  "§bFINESSE\n§8Click to select",
+  "§cMEMPHIS\n§8Click to select",
+  "§5LEANDOER\n§8Click to select",
+  "§2JUGG\n§8Click to select",
+  "§gCAPYBARA\n§8Click to select",
+  "§3SHOOTA\n§8Click to select",
+  "§6L\n§8Click to select",
+  "§4W\n§8Click to select",
+  "§8Go back\n§8Click to return",
+]
+platinumTagsForm = [
+  "Platinum tags",
+  "§cSANTA\n§8Click to select",
+  "§dTRIPPY\n§8Click to select",
+  "§4MAFIA\n§8Click to select",
+  "§3ALCOHOLIC\n§8Click to select",
+  "§bBLATANT\n§8Click to select",
+  "§eJUICY\n§8Click to select",
+  "§6OG\n§8Click to select",
+  "§gBROKE\n§8Click to select",
+  "§2INDIAN\n§8Click to select",
+  "§5GOAT\n§8Click to select",
+  "§0INVALIDCOLOR\n§8Click to select",
+  "§8Go back\n§8Click to return",
+]
+flyForm = [
+  "Fly",
+  "Fly: %s",
+  "§aEnable fly\n§8Enable fly mode",
+  "§cDisable fly\n§8Disable fly mode",
+  "§8Go back\n§8Click to return",
+]
+capybaraForm = [
+  "Capybara",
+  "Capybara: %s",
+  "§aEnable capybara\n§8Enable capybara pet",
+  "§cDisable capybara\n§8Disable capybara pet",
+  "§8Go back\n§8Click to return",
+]
+potionColorForm = [
+  "Potion color",
+  "Potion color: %s",
+  "§8Potion colors\n§8Select a potion color",
+  "§cDisable potion color\n§8Disable your potion color",
+  "§8Go back\n§8Click to return",
+]
+potionColorSelectionForm = [
+  "Potion colors",
+  "§cRed\n§8Click to select",
+  "§4Dark Red\n§8Click to select",
+  "§9Blue\n§8Click to select",
+  "§bLight Blue\n§8Click to select",
+  "§aGreen\n§8Click to select",
+  "§dPurple\n§8Click to select",
+  "§eYellow\n§8Click to select",
+  "§fWhite\n§8Click to select",
+  "§0Black\n§8Click to select",
+  "§8Go back\n§8Click to return",
+]
+statisticsForm = [
+  "Statistics",
+  "§aYour statistics:\n\n§fDivision: %s\n\n§fKills: §e%s\n§fDeaths: §e%s\n\n§fKDR: §e%s\n\n§fTime played: §e%s hours",
+  "Tops\n§8The most active players",
+]
+topsForm = [
+  "Tops",
+  "Top killers\n§8See who have the most kills",
+  "Top playtime\n§8See who have the most played time",
+  "Go back\n§8Click to return",
+]
+topKillersForm = [
+  "Top killers",
+  "%s%s. §f%s §7(§a%s kills§7)",
+  "Go back\n§8Click to return",
+]
+topPlayTimeForm = [
+  "Top playtime",
+  "%s%s. §f%s §7(§a%s hours§7)",
+  "Go back\n§8Click to return",
+]
+menuForm = [
+  "Menu",
+  "Info\n§8See server's information",
+  "Rules\n§8See server's rules",
+]
+hubItems = [
+  "§r§aDuels\n§7Click to use",
+  "§r§aFree For All\n§7Click to use",
+  "§r§aPreferences\n§7Click to use",
+  "§r§aStatistics\n§7Click to use",
+]
+spectatorItems = [
+  "§r§aTeleport to suspect\n§7Click to use",
+  "§r§aFreeze suspect\n§7Click to use",
+  "§r§cUnfreeze suspect\n§7Click to use",
+  "§r§aQuit from spectating\n§7Click to use",
+]
+infoForm = [
+  "Info",
+  "§aSocials:\n§fTelegram: §et.me/oldtralia\n§fWebsite: §eoldtralia.ru\n\n§aSupport:\n§fTelegram: §et.me/oldtralia\n\n§7Oldtralia is a non-commercial project.",
+  "§8Go back\n§8Click to return",
+]
+rulesForm = [
+  "Rules",
+  "§a1. In-Game process:\n§e1.1 §fCheating or using software, that gives you unfair advantage is forbidden - lifetime ban.\n§e1.2 §fVPN/Proxy is forbidden - lifetime ban. §7(contact us if you can't play without it)\n§e1.3 §fCheat Check/Screen Share refuse is forbidden - lifetime ban.\n§e1.4 §fUsage of server/client bugs is forbidden - kick, after - ban for 1 day.\n§e1.5 §fTeaming is forbidden - kick §7(1/3)§f, after - ban for 1 day.\n§e1.6 §fGiving or selling your account to someone is forbidden - lifetime ban and rank removal.\n§e1.7 §fInterrupting is forbidden - kick §7(1/3)§f, after - ban for 1 day.\n§e1.8 §fCustom 4D models/large, small, invisible skins §7(not from marketplace) §fis forbidden - kick, after - ban for 1 day.\n§e1.9 §fIncorrect/false reports is forbidden - kick, after - ban for 1 day.\n§e1.10 §fIncorrect §7(insulting) §fnicknames is forbidden - lifetime ban.\n§e1.11 §fHitting a player then running from him around the map is forbidden - kick §7(1/3)§f, after - ban for 1 day.\n\n§a2. In-Game chat:\n§e2.1 §fInsulting players is forbidden §7(L, ez and similar doesn't count) §f- kick §7(1/3)§f, after - mute for 1 day.\n§e2.2 §fInsulting staff is forbidden §7(L, ez and similar doesn't count) §f- mute for 2 days.\n§e2.3 §fRacism or insults because of nationality is forbidden - mute for 1 day.\n§e2.4 §fSpamming/flooding is forbidden - mute for 1 day.\n§e2.5 §fAdvertising other servers is forbidden - lifetime mute.\n§e2.6 §fInsulting this server is forbidden - mute for 1 week.\n\n§eBuy unban/unmute: §aoldtralia.ru",
+  "§8Go back\n§8Click to return",
+]
+secondServerForm = [
+  "Second Server",
+  "§fCheck out our new §esurvival §fserver: §l§bSimple PE§r§f!\n\n§fIP: §esimple-pe.ru\n§fPort: §e19132",
+  "Join server\n§8Click to join",
+]
+hubFloatingText = [
+  "§0 \n§l§aOldtralia Network",
+  "\n§1\n§eEnjoy our new games!\n§2\n§aoldtralia.ru\n§3 ",
+]
+hubScoreboard = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fRank: %s",
+  " §fDivision: %s",
+  "§1",
+  " §fOnline: §a%s",
+  " §fPlaying: §a%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+ffaScoreboardIdle = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fYour ping: §a%sms",
+  " §fPlaying: §a%s",
+  "§1",
+  " §fMode: §a%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+ffaScoreboardCombat = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fYour ping: §a%sms",
+  " §fTheir ping: §a%sms",
+  "§1",
+  " §fCombat: §a%ss",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardWaiting = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fOpponent: §e%s",
+  " §fMode: %s",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardRunning = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fYour ping: §a%sms",
+  " §fTheir ping: §a%sms",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardRunningBoxing = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fHits: %s(%s%s)",
+  "  §fYou: §a%s",
+  "  §fThem: §a%s",
+  "§2",
+  " §fYour ping: §a%sms",
+  " §fTheir ping: §a%sms",
+  "§3",
+  " §7oldtralia.ru",
+]
+duelsScoreboardEnd = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fGame ended!",
+  " §fWinner: §e%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardQueue = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fMode: %s",
+  " §fDuration: §a%s",
+  "§1",
+  " §fIn-Queues: §a%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+
+[ban]
+banExpiry = "%s days, %s hours, %s minutes"
+banNeverExpires = "never"
+banKick = "§cYou have been banned! §7(%s, %s)\n\n§fReason: §c%s §7| §fUnban: §c%s\n§fAppeal: §at.me/oldtralia"
+
+[ban_first]
+banExpiry = "%s days, %s hours, %s minutes"
+banNeverExpires = "never"
+banKick = "§cYou have been banned! §7(%s, §f%s§7)\n\n§fReason: §c%s §7| §fUnban: §c%s\n§fAppeal: §at.me/oldtralia"
+
+[cape]
+Oldtralia = "Oldtralia"
+Lunarelly = "Lunarelly"
+Birthday = "Birthday"
+Cake = "Cake"
+Enderman = "Enderman"
+Firework = "Firework"
+Iron_Golem = "Iron Golem"
+Pickaxe = "Pickaxe"
+Green_Creeper = "Green Creeper"
+Red_Creeper = "Red Creeper"
+Turtle = "Turtle"
+Migrator = "Migrator"
+
+[cape_colored]
+Oldtralia = "§aOldtralia"
+Lunarelly = "§4Lunarelly"
+Birthday = "§dBirthday"
+Cake = "§bCake"
+Enderman = "§5Enderman"
+Firework = "§6Firework"
+Iron_Golem = "§8Iron Golem"
+Pickaxe = "§9Pickaxe"
+Green_Creeper = "§2Green Creeper"
+Red_Creeper = "§cRed Creeper"
+Turtle = "§2Turtle"
+Migrator = "§cMigrator"
+
+[language]
+en = "English"
+ru = "Russian"
+
+[input_mode]
+"Keyboard & Mouse" = "Keyboard & Mouse"
+Gamepad = "Gamepad"
+Touch = "Touch"
+Motion = "Motion"
+
+[anticheat]
+loginError = "§cLogin error §7(%s)\n§fCode: §e%s"
+inGameError = "§cIn-game error §7(%s)\n§fCode: §e%s"
+
+[potion_color]
+Red = "Red"
+Dark_Red = "Dark Red"
+Blue = "Blue"
+Light_Blue = "Light Blue"
+Green = "Green"
+Purple = "Purple"
+Yellow = "Yellow"
+White = "White"
+Black = "Black"
+
+[potion_color_colored]
+Red = "§cRed"
+Dark_Red = "§4Dark Red"
+Blue = "§9Blue"
+Light_Blue = "§bLight Blue"
+Green = "§aGreen"
+Purple = "§dPurple"
+Yellow = "§eYellow"
+White = "§fWhite"
+Black = "§0Black"

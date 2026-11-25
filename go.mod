@@ -11,6 +11,7 @@ replace github.com/shawtymarco/go-multiversion => github.com/SovaMC/go-multivers
 require (
 	github.com/df-mc/dragonfly v0.0.0-00010101000000-000000000000
 	github.com/df-mc/goleveldb v1.1.9
+	github.com/go-sql-driver/mysql v1.10.2
 	github.com/google/uuid v1.6.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/sandertv/gophertunnel v1.63.1-0.20261112122229-e2251a60f71d
@@ -18,6 +19,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/brentp/intintmap v0.0.0-20251106190759-56907b1f8479 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coder/websocket v1.8.14 // indirect

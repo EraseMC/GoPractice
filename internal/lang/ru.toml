@@ -1,0 +1,664 @@
+[defaults]
+messages = "Неизвестное сообщение"
+ban = "Неизвестное сообщение"
+ban_first = "Неизвестное сообщение"
+cape = "-"
+cape_colored = "-"
+language = "Неизвестное сообщение"
+input_mode = "Неизвестное сообщение"
+anticheat = "Неизвестное сообщение"
+potion_color = "-"
+potion_color_colored = "§7-"
+
+[messages]
+commandNotFoundOrNoPermission = "§cНеизвестная команда: %s. Убедитесь, что такая команда существует и у вас есть право ее использовать."
+commandOnlyConsole = "§cКоманда может быть выполнена только от консоли!"
+chatCooldown = "§cНе спамьте!"
+commandCooldown = "§cНе спамьте командами!"
+chatLongMessage = "§cВаше сообщение слишком длинное!"
+joinMessage = "§fДобро пожаловать на §l§aOldtralia Network§r§f!\nТекущий онлайн: §a%s\n§fСайт: §aoldtralia.ru"
+languageAlreadySelected = "§cУ Вас уже выбран Русский язык!"
+languageSuccessfullySelected = "§aВы выбрали Русский язык в качестве основного языка!"
+featureInDevelopment = "§cДанная функция находится в разработке!"
+playerNotFound = "§cИгрок не найден!"
+playerNotRegistered = "§cИгрок не зарегистрирован!"
+rankUsage = "§eИспользование: /rank <Игрок> <Ранг>"
+rankNotFound = "§cРанг не найден!"
+rankCannotBeSet = "§cВы не можете поставить этот ранг!"
+rankSelf = "§cВы не можете поменять свой ранг!"
+rankCannotBeChanged = "§cВы не можете поменять ранг этого игрока!"
+rankAlreadySet = "§cУ этого игрока и так установлен этот ранг!"
+rankChanged = "§aРанг игрока %s был изменён на %s!"
+rankChangedAnother = "§aВаш ранг был изменён на %s!"
+pingSelf = "§aВаш пинг: §e%sмс"
+pingAnother = "§aПинг игрока §e%s§a: §e%sмс"
+platformSelf = "§aВаша платформа: §e%s (%s)"
+platformAnother = "§aПлатформа игрока §e%s§a: §e%s (%s)"
+tellUsage = "§eИспользование: /tell <Игрок> <Сообщение>"
+tellSelfError = "§cВы не можете отправить сообщение самому себе!"
+tellSelf = "§eВаше сообщение игроку §a%s§e: %s"
+tellAnother = "§eСообщение от §a%s§e: %s"
+replyUsage = "§eИспользование: /reply <Сообщение>"
+replyNoOneTo = "§cВам некому отвечать!"
+replySelf = "§eВаш ответ игроку §a%s§e: %s"
+replyAnother = "§eОтвет от игрока §a%s§e: %s"
+scoreboardEnabled = "§aВы успешно включили scoreboard!"
+scoreboardDisabled = "§cВы успешно отключили scoreboard!"
+cpsEnabled = "§aВы успешно включили счётчик кликов в секунду!"
+cpsDisabled = "§cВы успешно отключили счётчик кликов в секунду!"
+autosprintEnabled = "§aВы успешно включили авто-бег!"
+autosprintDisabled = "§cВы успешно отключили авто-бег!"
+lightningEnabled = "§aВы успешно включили молнию после убийства!"
+lightningDisabled = "§cВы успешно отключили молнию после убийства!"
+hidePlayersEnabled = "§aВы успешно включили скрытие игроков в бою!"
+hidePlayersDisabled = "§cВы успешно отключили скрытие игроков в бою!"
+arenaRespawnEnabled = "§aВы успешно включили возрождение на арене!"
+arenaRespawnDisabled = "§cВы успешно отключили возрождение на арене!"
+enderPearlCooldownStarted = "§cКулдаун начался"
+enderPearlCooldownEnded = "§aКулдаун закончился"
+enderPearlCooldownOngoing = "§cВы сможете использовать этот предмет через %s секунд"
+muteExpiry = "%s дней, %s часов, %s минут"
+muteNeverExpires = "никогда"
+muteMessage = "§cВам был заблокирован чат! §7(%s, %s)\n§fПричина: §c%s §7| §fРазмут: §c%s"
+banUsage = "§eИспользование: /ban <Игрок> <Время §7(в днях, 0 - навсегда)§e> <Причина>"
+invalidBanTime = "§cНеверный формат времени для бана!"
+playerCannotBeBanned = "§cВы не можете забанить этого игрока!"
+playerAlreadyBanned = "§cИгрок уже забанен!"
+successfulBan = "§aВы успешно забанили игрока %s на %s дней с причиной: %s"
+successfulForeverBan = "§aВы успешно забанили игрока %s навсегда с причиной: %s"
+muteUsage = "§eИспользование: /mute <Игрок> <Время §7(в днях, 0 - навсегда)§e> <Причина>"
+invalidMuteTime = "§cНеверный формат времени для мута!"
+playerCannotBeMuted = "§cВы не можете замутить этого игрока!"
+playerAlreadyMuted = "§cИгрок уже находится в муте!"
+successfulMute = "§aВы успешно замутили игрока %s на %s дней с причиной: %s"
+successfulForeverMute = "§aВы успешно замутили игрока %s навсегда с причиной: %s"
+kickUsage = "§eИспользование: /kick <Игрок> <Причина>"
+playerCannotBeKicked = "§cВы не можете кикнуть этого игрока!"
+successfulKick = "§aВы успешно кикнули игрока %s с причиной: %s"
+kickMessage = "§cВы были кикнуты! §7(%s, %s)\n\n§fПричина: §c%s"
+selfBan = "§cВы не можете забанить самого себя!"
+selfMute = "§cВы не можете замутить самого себя!"
+selfKick = "§cВы не можете кикнуть самого себя!"
+unbanUsage = "§eИспользование: /unban <Player>"
+unmuteUsage = "§eИспользование: /unmute <Player>"
+unmuteSelf = "§cВы не можете размутить самого себя!"
+playerNotBanned = "§cИгрок не забанен!"
+playerNotMuted = "§cИгрок не находится в муте!"
+successfulUnban = "§aВы успешно разбанили игрока: %s"
+successfulUnmute = "§aВы успешно размутили игрока: %s"
+reportUsage = "§eИспользование: /report <Игрок> <Причина>"
+reportSelf = "§cВы не можете пожаловаться на самого себя!"
+playerCannotBeReported = "§cВы не можете пожаловаться на этого игрока!"
+successfulReport = "§aВы успешно пожаловались на игрока §e%s §aс причиной: §e%s"
+clearedChat = "§eЧат был очищен!"
+clearChatSuccess = "§aВы успешно очистили чат!"
+emojiSuccess = "§eДоступные эмодзи: §a (:skull:),  (:fire:),  (:eyes:),  (:clown:),  (:100:),  (:laugh:),  (:heart:)"
+crashUsage = "§eИспользование: /crash <Игрок> <Тип>"
+crashSelf = "§cВы не можете крашнуть самого себя!"
+playerCannotBeCrashed = "§cВы не можете крашнуть этого игрока!"
+crashProcessing = "§eКраш в процессе... §7(%s)"
+crashTypeNotFound = "§cНеизвестный тип краша!"
+listSuccess = "§eСейчас §a%s §eигроков онлайн:\n§a%s"
+cosmeticsNoPermission = "§cКосметика доступна с привилегии §l§2Wayner§r §cи выше!"
+tagsNoPermission = "§cТеги доступны с привилегии §l§2Wayner§r §cи выше!"
+goldenTagsNoPermission = "§cЗолотые теги доступны с привилегии §l§5Mystery§r §cи выше!"
+platinumTagsNoPermission = "§cПлатиновые теги доступны с привилегии §l§aGangster§r §cи выше!"
+tagAlreadySelected = "§cВы уже выбрали этот тег!"
+tagEnabled = "§aВыбран тег: %s"
+tagDisabled = "§cВы успешно отключили тег!"
+tagDoesNotSet = "§cУ Вас не включён тег!"
+capesNoPermission = "§cПлащи доступны с привилегии §l§5Mystery§r §cи выше!"
+capeAlreadySelected = "§cВы уже выбрали этот плащ!"
+capeEnabled = "§aВыбран плащ: %s"
+capeDisabled = "§cВы успешно отключили плащ!"
+capeDoesNotSet = "§cУ Вас не включён плащ!"
+flyNoPermission = "§cПолёт доступен с привилегии §l§2Wayner§r §cи выше!"
+flyAlreadyEnabled = "§cУ Вас уже включён полёт!"
+flyAlreadyDisabled = "§cУ Вас не включён полёт!"
+flyEnabled = "§aВы успешно включили полёт!"
+flyDisabled = "§cВы успешно отключили полёт!"
+flyEnabledForForm = "§aвключён"
+flyDisabledForForm = "§cотключён"
+capybaraNoPermission = "§cКапибара доступна с привилегии §l§aGangster§r §cи выше!"
+capybaraAlreadyEnabled = "§cУ Вас уже включена капибара!"
+capybaraAlreadyDisabled = "§cУ Вас не включена капибара!"
+capybaraEnabled = "§aВы успешно включили капибару!"
+capybaraDisabled = "§cВы успешно отключили капибару!"
+capybaraEnabledForForm = "§aвключена"
+capybaraDisabledForForm = "§cотключена"
+potionColorNoPermission = "§cЦвет зелий доступен с привилегии §l§aGangster§r §cи выше!"
+potionColorAlreadySelected = "§cУ вас уже выбран этот цвет зелий!"
+potionColorAlreadyDisabled = "§cУ вас не включён цвет зелий!"
+potionColorEnabled = "§aВыбран цвет зелий: %s"
+potionColorDisabled = "§cВы успешно отключили цвет зелий!"
+spectateUsage = "§eИспользование: /spectate <Игрок|quit>"
+notSpectator = "§cВы не в режиме наблюдения!"
+spectateSelf = "§cВы не можете наблюдать за самим собой!"
+playerCannotBeSpectated = "§cВы не можете наблюдать за этим игроком!"
+spectateAnotherSpectator = "§cВы не можете наблюдать за другим наблюдателем!"
+alreadySpectator = "§cВы и так наблюдаете за другим игроком!"
+alreadyBeingSpectated = "§cЗа вами уже наблюдают!"
+playerAlreadySpectated = "§cЗа этим игроком уже наблюдают!"
+spectateNotInHub = "§cВы не можете наблюдать, пока находитесь не в лобби!"
+spectateSuccess = "§eВы наблюдаете за §a%s §e(%sмс)"
+spectatorSuccessfulTeleport = "§aВы успешно телепортировались к подозреваемому!"
+spectatorSuccessfulFreeze = "§aВы успешно заморозили своего подозреваемого!"
+frozenBySpectator = "§eВы были заморожены наблюдателем!"
+spectatorSuccessfulUnfreeze = "§cВы успешно разморозили своего подозреваемого!"
+spectatorSuccessfulQuit = "§aВы успешно покинули режим наблюдения!"
+spectatorSuspectHadQuit = "§cВаш подозреваемый покинул сервер!"
+spectatorActionBar = "§fПодозреваемый: §e%s\n§fПинг: §e%sмс §7| §fДальность удара: §e%s §7| §fCPS: §e%s\n§fОС: §e%s (%s)"
+teleportedToSpawn = "§aТелепортируемся на спавн!"
+noSpawnInCombat = "§cВы не можете выйти на спавн, пока вы в бою!"
+noSpawnInDuel = "§cВы не можете выйти на спавн, пока находитесь на дуэли!"
+noSpawnInRespawnDelay = "§cВы не можете выйти на спавн, пока вы возрождаетесь!"
+noSpawnInSpectator = "§cВы не можете выйти на спавн в режиме наблюдения!"
+noReKitInCombat = "§cВы не можете повторно получить набор, пока вы в бою!"
+noReKitInRespawnDelay = "§cВы не можете повторно получить набор, пока вы возрождаетесь!"
+successfulReKit = "§aВы успешно получили новый набор!"
+notInFFA = "§cВы не находитесь на открытой арене!"
+notInFFAOrDuel = "§cВы не находитесь в игре!"
+joinedFFA = "§aВы вошли на открытую арену %s!"
+ffaSelfInCombat = "§cВы находитесь в бою с %s"
+ffaPlayerInCombat = "§c%s в бою с %s"
+ffaYouAreNowInCombat = "§cВы теперь в бою с %s!"
+ffaCombatReduced = "§aВы больше не в бою!"
+ffaNoDebuffKill = "§e%s §7[§c%s POTS§7] §fбыл убит §e%s §7[§c%s POTS§7] §7[§4%s HP§7]"
+ffaSoupKill = "§e%s §7[§c%s SOUPS§7] §fбыл убит §e%s §7[§c%s SOUPS§7] §7[§4%s HP§7]"
+ffaSumoKill = "§e%s §fбыл убит §e%s"
+ffaResistanceKill = "§e%s §fбыл убит §e%s"
+ffaFistKill = "§e%s §fбыл убит §e%s §7[§4%s HP§7]"
+ffaGAppleKill = "§e%s §fбыл убит §e%s §7[§4%s HP§7]"
+ffaComboKill = "§e%s §fбыл убит §e%s §7[§4%s HP§7]"
+playerRankChangedNotification = "§e%s изменил ранг игрока %s на %s"
+playerBanNotification = "§eИгрок %s был забанен от руки %s %s с причиной: %s"
+playerMuteNotification = "§eИгроку %s был заблокирован чат от руки %s %s с причиной: %s"
+playerUnbanNotification = "§eИгрок %s был разбанен от руки %s"
+playerUnmuteNotification = "§eИгроку %s был разблокирован чат от руки %s"
+playerKickNotification = "§eИгрок %s был кикнут от руки %s с причиной: %s"
+playerReportNotification = "§eНа игрока %s пожаловался %s с причиной: %s"
+clearedChatNotification = "§e%s очистил чат"
+serverRestartNotificationInMinutes = "§aСервер перезагрузится через §e%s §aминут!"
+serverRestartNotificationInSeconds = "§aСервер перезагрузится через §e%s §aсекунд!"
+disabledChatNotification = "§e%s отключил чат"
+enabledChatNotification = "§e%s включил чат"
+gameModeUsage = "§eИспользование: /gamemode <Режим игры>"
+noGameModeInCombat = "§cВы не можете сменить режим игры, пока вы в бою!"
+noGameModeInSpectator = "§cВы не можете сменить режим игры в режиме наблюдения!"
+noGameModeInRespawnDelay = "§cВы не можете сменить режим игры, пока вы возрождаетесь!"
+sameGameMode = "§cВы и так находитесь в этом режиме игры!"
+unknownGameMode = "§cНеизвестный режим игры!"
+gameModeChangedToSurvival = "§aВаш режим игры был изменён на выживание!"
+gameModeChangedToCreative = "§aВаш режим игры был изменён на творческий!"
+gameModeChangedToAdventure = "§aВаш режим игры был изменён на приключение!"
+gameModeChangedToSpectator = "§aВаш режим игры был изменён на наблюдателя!"
+successfulReconnect = "§eПереподключение..."
+statusSuccess = "§eСостояние сервера:\n§fОнлайн: §e%s §7(%s зарегистрировано)\n§fАптайм: §e%s\n§fТекущий TPS: §e%s §g(%sPERCENT)\n§fСредний TPS: §e%s §g(%sPERCENT)\n§fИспользовано памяти: §e%s МБ"
+profileCannotCheck = "§cВы не можете посмотреть профиль этого игрока!"
+profileYes = "§aда"
+profileNo = "§cнет"
+profileSelfOwner = "§eВаш профиль (§a%s§e):\n§fРанг: %s\n§fАйпи: §e%s\n§fМут: %s\n§fПинг: §e%sмс\n§fВерсия игры: §e%s\n§fОС: §e%s (%s)\n§fМодель: §e%s\n§fВремя в игре: §e%s часов\n§fДругие аккаунты: §e%s"
+profileSelf = "§eВаш профиль (§a%s§e):\n§fРанг: %s\n§fМут: %s\n§fПинг: §e%sмс\n§fВерсия игры: §e%s\n§fОС: §e%s (%s)\n§fВремя в игре: §e%s часов\n§fДругие аккаунты: §e%s"
+profileOnlineOwner = "§eПрофиль игрока §a%s§e:\n§fРанг: %s\n§fАйпи: §e%s\n§fОнлайн: %s\n§fМут: %s\n§fПинг: §e%sмс\n§fВерсия игры: §e%s\n§fОС: §e%s (%s)\n§fМодель: §e%s\n§fВремя в игре: §e%s часов\n§fДругие аккаунты: §e%s"
+profileOnline = "§eПрофиль игрока §a%s§e:\n§fРанг: %s\n§fОнлайн: %s\n§fМут: %s\n§fПинг: §e%sмс\n§fВерсия игры: §e%s\n§fОС: §e%s (%s)\n§fВремя в игре: §e%s часов\n§fДругие аккаунты: §e%s"
+profileOfflineOwner = "§eПрофиль игрока §a%s§e:\n§fРанг: %s\n§fАйпи: §e%s\n§fОнлайн: %s\n§fБан: %s\n§fМут: %s\n§fВремя в игре: §e%s часов\n§fДругие аккаунты: §e%s"
+profileOffline = "§eПрофиль игрока §a%s§e:\n§fРанг: %s\n§fОнлайн: %s\n§fБан: %s\n§fМут: %s\n§fВремя в игре: §e%s часов\n§fДругие аккаунты: §e%s"
+successfulSurrender = "§aВы успешно сдались!"
+notInCombat = "§cВы не находитесь в бою!"
+chatNowDisabled = "§eЧат теперь отключён!"
+chatNowEnabled = "§eЧат теперь включён!"
+disableChatSuccess = "§cВы успешно отключили общий чат!"
+enableChatSuccess = "§aВы успешно включили общий чат!"
+chatCurrentlyDisabled = "§cЧат сейчас отключён!"
+duelCommandNotInHub = "§cВы не находитесь в лобби!"
+duelCommandUsage = "§eИспользование:\n§7- §e/duel invite <Игрок> [Режим]\n§7- §e/duel accept [Игрок]"
+duelCommandInviteUsage = "§eИспользование: /duel invite <Игрок> [Режим]"
+duelCommandModeNotFound = "§cРежим не найден!"
+duelCommandTargetNotInHub = "§cИгрок находится не в лобби!"
+duelCommandSelf = "§cВы не можете пригласить на дуэль самого себя!"
+duelCommandInviteAlreadySent = "§cВы уже пригласили этого игрока на дуэль!"
+duelCommandInviteSuccess = "§aВы отправили приглашение на дуэль игроку §e%s §aна режиме %s§a!"
+duelCommandInviteNotification = "§aИгрок §e%s §aпригласил вас на дуэль на режиме %s§a!"
+duelCommandInviteNotFound = "§cУ Вас нет приглашений на дуэль!"
+duelCommandInviteAccepted = "§aВы приняли приглашение игрока §e%s§a!"
+duelCommandInviteAcceptedBy = "§aИгрок §e%s §aпринял ваше приглашение на дуэль!"
+duelCommandInviteNotFoundFrom = "§cЭтот игрок не приглашал Вас на дуэль!"
+duelStarting = "§eДуэль начинается!\n§fРежим: %s\n§fПротивник: §e%s"
+duelStarted = "§aИгра началась. Удачи!"
+duelEndedDefault = "§aИгра окончена! Режим: %s §7(%s)\n§fПобедитель: §e%s §7[§c%s HP§7]\n§fПроигравший: §e%s"
+duelEndedNoDamage = "§aИгра окончена! Режим: %s §7(%s)\n§fПобедитель: §e%s\n§fПроигравший: §e%s"
+duelEndedNoDebuff = "§aИгра окончена! Режим: %s §7(%s)\n§fПобедитель: §e%s §7[§c%s POTS§7] §7[§c%s HP§7]\n§fПроигравший: §e%s §7[§c%s POTS§7]"
+duelEndedBoxing = "§aИгра окончена! Режим: %s §7(%s)\n§fПобедитель: §e%s §7[§c%s ударов§7]\n§fПроигравший: §e%s §7[§c%s ударов§7]"
+duelEndedSoup = "§aИгра окончена! Режим: %s §7(%s)\n§fПобедитель: §e%s §7[§c%s SOUPS§7] §7[§c%s HP§7]\n§fПроигравший: §e%s §7[§c%s SOUPS§7]"
+duelJoinedQueue = "§aВы вошли в очередь режима %s§a!"
+duelLeftQueue = "§cВы покинули очередь!"
+duelsItemLeaveQueue = "§r§cВыйти\n§7Зажмите предмет"
+banCommandDescription = "Забанить игрока"
+clearChatCommandDescription = "Очистить чат"
+crashCommandDescription = "Крашнуть клиент игрока"
+duelCommandDescription = "Пригласить игрока на дуэль"
+emojiCommandDescription = "Список эмодзи"
+gameModeCommandDescription = "Сменить свой режим игры"
+infoCommandDescription = "Информация о сервере"
+listCommandDescription = "Список онлайн игроков"
+kickCommandDescription = "Кикнуть игрока"
+muteCommandDescription = "Замутить игрока"
+pingCommandDescription = "Посмотреть свой пинг или же у другого игрока"
+platformCommandDescription = "Посмотреть свою платформу или же у другого игрока"
+profileCommandDescription = "Посмотреть свой профиль или же у другого игрока"
+rankCommandDescription = "Сменить ранг игрока"
+reconnectCommandDescription = "Переподключиться к серверу"
+reKitCommandDescription = "Получить новый набор"
+replyCommandDescription = "Ответить на сообщение игрока"
+reportCommandDescription = "Пожаловаться на игрока"
+restartCommandDescription = "Перезагрузить сервер"
+rulesCommandDescription = "Правила сервера"
+sayCommandDescription = "Объявить сообщение"
+settingsCommandDescription = "Открыть настройки"
+spawnCommandDescription = "Телепортироваться на спавн"
+spectateCommandDescription = "Наблюдать за игроком"
+statusCommandDescription = "Посмотреть состояние сервера"
+surrenderCommandDescription = "Покинуть бой"
+tellCommandDescription = "Отправить сообщение игроку"
+toggleChatCommandDescription = "Включить или отключить чат"
+unbanCommandDescription = "Разбанить игрока"
+unmuteCommandDescription = "Размутить игрока"
+broadcastNotification = [
+  "§aЗаходите на наш сайт: §eoldtralia.ru",
+  "§aПосетите наш Telegram канал: §et.me/oldtralia",
+]
+joinTitle = [
+  "§l§aOldtralia",
+  "§fПриятной игры!",
+]
+ffaDeathTitle = [
+  "§l§cВАС УБИЛИ",
+  "§e%s",
+]
+serverRestartTitle = [
+  "§l§aПерезагрузка",
+  "%s",
+]
+gamesForm = [
+  "Выбор режима",
+  "§fВыберите один из наших §aрежимов §fдля игры!",
+  "§2Открытые арены\n§8Играют: §e%s",
+]
+ffaForm = [
+  "Открытые арены",
+  "§cNoDebuff\n§8Играют: §e%s",
+  "§7Soup\n§8Играют: §e%s",
+  "§aSumo\n§8Играют: §e%s",
+  "§6Fist\n§8Играют: §e%s",
+  "§eGApple\n§8Играют: §e%s",
+  "§4Resistance\n§8Играют: §e%s",
+  "§bCombo\n§8Играют: §e%s",
+  "§8Вернуться назад\n§7Нажмите, чтобы вернуться назад",
+]
+duelsFormQueue = [
+  "Дуэли",
+  "%s\n§8Играют: §e%s §8| §8В очереди: §e%s",
+]
+duelsFormInvite = [
+  "Дуэли (%s)",
+  "%s\n§8Нажмите, чтобы выбрать",
+]
+preferencesForm = [
+  "Настройки",
+  "Язык\n§8Выберите язык",
+  "Утилиты\n§8Включите или отключите функцию",
+  "Косметика\n§8Измените свой внешний вид",
+]
+languageForm = [
+  "Выбор языка",
+  "Английский\n§8Нажмите, чтобы выбрать",
+  "Русский\n§aВыбран",
+  "Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+languageConfirmationForm = [
+  "Подтвердите выбор языка",
+  "§fВы хотите выбрать §e%s §fязык?",
+  "Да",
+  "Нет",
+]
+togglesForm = [
+  "Утилиты",
+  "Основные\n§8Измените свои основные настройки",
+  "Открытые арены\n§8Измените свои настройки открытых арен",
+  "Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+generalTogglesForm = [
+  "Основные настройки",
+  "Scoreboard (Статус-бар справа)",
+  "Счётчик кликов в секунду",
+  "Авто-бег",
+]
+ffaTogglesForm = [
+  "Настройки открытых арен",
+  "Скрытие игроков в бою",
+  "Возрождение на арене",
+  "Молния после убийства",
+]
+cosmeticsForm = [
+  "Косметика",
+  "Плащи\n§8Выберите свой плащ",
+  "Теги\n§8Выберите свой тег",
+  "Полёт\n§8Включите режим полёта",
+  "Цвет зелий\n§8Выберите свой цвет зелий",
+  "Капибара\n§8Включите питомца капибару",
+  "Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+capesForm = [
+  "Плащи",
+  "§fВаш плащ: §e%s",
+  "§8Все плащи\n§8Выберите плащ",
+  "§cУбрать плащ\n§8Нажмите, чтобы убрать плащ",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+capesSelectionForm = [
+  "Все плащи",
+  "§aOldtralia\n§8Нажмите, чтобы выбрать",
+  "§4Lunarelly\n§8Нажмите, чтобы выбрать",
+  "§dДень рождения\n§8Нажмите, чтобы выбрать",
+  "§bТорт\n§8Нажмите, чтобы выбрать",
+  "§5Странник края\n§8Нажмите, чтобы выбрать",
+  "§6Феерверк\n§8Нажмите, чтобы выбрать",
+  "§8Железный голем\n§8Нажмите, чтобы выбрать",
+  "§9Кирка\n§8Нажмите, чтобы выбрать",
+  "§2Зелёный крипер\n§8Нажмите, чтобы выбрать",
+  "§cКрасный крипер\n§8Нажмите, чтобы выбрать",
+  "§2Черепаха\n§8Нажмите, чтобы выбрать",
+  "§cМигратор\n§8Нажмите, чтобы выбрать",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+tagsForm = [
+  "Теги",
+  "Ваш тег: %s",
+  "§fСеребряные теги\n§8Выберите серебряный тег",
+  "§6Золотые теги\n§8Выберите золотой тег",
+  "§bПлатиновые теги\n§8Выберите платиновый тег",
+  "§cУбрать тег\n§8Нажмите, чтобы убрать тег",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+silverTagsForm = [
+  "Серебряные теги",
+  "§dE-GIRL\n§8Нажмите, чтобы выбрать",
+  "§cBESTWW\n§8Нажмите, чтобы выбрать",
+  "§6GOD\n§8Нажмите, чтобы выбрать",
+  "§eLIT\n§8Нажмите, чтобы выбрать",
+  "§dLUNAR\n§8Нажмите, чтобы выбрать",
+  "§7STARDUST\n§8Нажмите, чтобы выбрать",
+  "§8CHOPPA\n§8Нажмите, чтобы выбрать",
+  "§fCLOUTLORD\n§8Нажмите, чтобы выбрать",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+goldenTagsForm = [
+  "Золотые теги",
+  "§aOLDTRALIA\n§8Нажмите, чтобы выбрать",
+  "§bFINESSE\n§8Нажмите, чтобы выбрать",
+  "§cMEMPHIS\n§8Нажмите, чтобы выбрать",
+  "§5LEANDOER\n§8Нажмите, чтобы выбрать",
+  "§2JUGG\n§8Нажмите, чтобы выбрать",
+  "§gCAPYBARA\n§8Нажмите, чтобы выбрать",
+  "§3SHOOTA\n§8Нажмите, чтобы выбрать",
+  "§6L\n§8Нажмите, чтобы выбрать",
+  "§4W\n§8Нажмите, чтобы выбрать",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+platinumTagsForm = [
+  "Платиновые теги",
+  "§cSANTA\n§8Нажмите, чтобы выбрать",
+  "§dTRIPPY\n§8Нажмите, чтобы выбрать",
+  "§4MAFIA\n§8Нажмите, чтобы выбрать",
+  "§3ALCOHOLIC\n§8Нажмите, чтобы выбрать",
+  "§bBLATANT\n§8Нажмите, чтобы выбрать",
+  "§eJUICY\n§8Нажмите, чтобы выбрать",
+  "§6OG\n§8Нажмите, чтобы выбрать",
+  "§gBROKE\n§8Нажмите, чтобы выбрать",
+  "§2INDIAN\n§8Нажмите, чтобы выбрать",
+  "§5GOAT\n§8Нажмите, чтобы выбрать",
+  "§0INVALIDCOLOR\n§8Нажмите, чтобы выбрать",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+flyForm = [
+  "Полёт",
+  "Полёт: %s",
+  "§aВключить полёт\n§8Включить режим полёта",
+  "§cВыключить полёт\n§8Выключить режим полёта",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+capybaraForm = [
+  "Капибара",
+  "Капибара: %s",
+  "§aВключить капибару\n§8Включить питомца капибару",
+  "§cВыключить капибару\n§8Выключить питомца капибару",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+potionColorForm = [
+  "Цвет зелий",
+  "Цвет зелий: %s",
+  "§8Цвета зелий\n§8Выберите цвет зелий",
+  "§cОтключить цвет зелий\n§8Отключите свой цвет зелий",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+potionColorSelectionForm = [
+  "Цвета зелий",
+  "§cКрасный\n§8Нажмите, чтобы выбрать",
+  "§4Тёмно-красный\n§8Нажмите, чтобы выбрать",
+  "§9Синий\n§8Нажмите, чтобы выбрать",
+  "§bГолубой\n§8Нажмите, чтобы выбрать",
+  "§aЗелёный\n§8Нажмите, чтобы выбрать",
+  "§dФиолетовый\n§8Нажмите, чтобы выбрать",
+  "§eЖёлтый\n§8Нажмите, чтобы выбрать",
+  "§fБелый\n§8Нажмите, чтобы выбрать",
+  "§0Чёрный\n§8Нажмите, чтобы выбрать",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+statisticsForm = [
+  "Статистика",
+  "§aВаша статистика:\n\n§fДивизия: %s\n\n§fУбийств: §e%s\n§fСмертей: §e%s\n\n§fУ/С: §e%s\n\n§fВремя в игре: §e%s часов",
+  "Топы\n§8Самые активные игроки",
+]
+topsForm = [
+  "Топы",
+  "Топ по убийствам\n§8Посмотрите, кто убил больше всех",
+  "Топ по времени в игре\n§8Посмотрите, кто играл больше всех",
+  "Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+topKillersForm = [
+  "Топ по убийствам",
+  "%s%s. §f%s §7(§a%s убийств§7)",
+  "Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+topPlayTimeForm = [
+  "Топ по времени в игре",
+  "%s%s. §f%s §7(§a%s часов§7)",
+  "Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+menuForm = [
+  "Меню",
+  "Информация\n§8Посмотреть информацию о сервере",
+  "Правила\n§8Посмотреть правила сервера",
+]
+infoForm = [
+  "Информация",
+  "§aСоциальные сети:\n§fTelegram: §et.me/oldtralia\n§fСайт: §eoldtralia.ru\n\n§aПоддержка:\n§fTelegram: §et.me/oldtralia\n\n§7Oldtralia — некоммерческий проект.",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+rulesForm = [
+  "Правила",
+  "§a1. Игровой процесс:\n§e1.1 §fЗапрещено использовать любые виды программного обеспечения, дающие вам преимущество - блокировка навсегда.\n§e1.2 §fЗапрещено использование любых прокси, VPN - блокировка навсегда. §7(могут быть исключения)\n§e1.3 §fОтказ от проверки на использование запрещённого программного обеспечения приводит к блокировке навсегда.\n§e1.4 §fЗапрещено использовать баги сервера/клиента, дающие вам преимущество перед другими игроками - блокировка на 1 день.\n§e1.5 §fЗапрещён тим на аренах - кик §7(1/3)§f, далее - блокировка на 1 день.\n§e1.6 §fЗапрещено передавать/продавать свой аккаунт третьим лицам - блокировка навсегда и снятие привилегии.\n§e1.7 §fЗапрещено вмешиваться в чужую игру - кик §7(1/3)§f, далее - блокировка на 1 день.\n§e1.8 §fПользовательские 4D модели §7(не из магазина)§f, которые больше/меньше стандартной - кик, далее - блокировка на 1 день.\n§e1.9 §fНекорректные или заведомо ложные жалобы запрещены - кик, далее - блокировка на 1 день.\n§e1.10 §fЗапрещены некорректные (оскорбительные) ники — блокировка навсегда.\n§e1.11 §fЗапрещено ударять игрока и намеренно бегать от него по всей карте - кик §7(1/3)§f, далее - бан на 1 день.\n\n§a2. Игровой чат:\n§e2.1 §fЗапрещено оскорблять других игроков §7(L, ez и подобные не учитываются) §f- кик §7(1/3)§f, далее - блокировка чата на 1 день.\n§e2.2 §fЗапрещено оскорблять администрацию сервера §7(L, ez и подобные не учитываются) §f- блокировка чата на 2 дня.\n§e2.3 §fЗапрещено угнетение по национальности человека - блокировка чата на 1 день.\n§e2.4 §fЗапрещено спамить/флудить - блокировка чата на 1 день.\n§e2.5 §fЗапрещено рекламировать сторонние сервера - блокировка чата навсегда.\n§e2.6 §fЗапрещено оскорблять проект - блокировка чата на 1 неделю.\n\n§eПокупка разблокировки: §aoldtralia.ru",
+  "§8Вернуться назад\n§8Нажмите, чтобы вернуться назад",
+]
+secondServerForm = [
+  "Второй сервер",
+  "§fМы открыли §aновый сервер §fпо выживанию: §l§bSimple PE§r§f!\n\n§fАйпи: §esimple-pe.ru\n§fПорт: §e19132",
+  "Зайти на сервер\n§8Нажмите, чтобы присоединиться",
+]
+hubItems = [
+  "§r§aДуэли\n§7Зажмите предмет",
+  "§r§aОткрытые арены\n§7Зажмите предмет",
+  "§r§aНастройки\n§7Зажмите предмет",
+  "§r§aСтатистика\n§7Зажмите предмет",
+]
+spectatorItems = [
+  "§r§aТелепортироваться к подозреваемому\n§7Зажмите предмет",
+  "§r§aЗаморозить подозреваемого\n§7Зажмите предмет",
+  "§r§cРазморозить подозреваемого\n§7Зажмите предмет",
+  "§r§aВыйти из наблюдения\n§7Зажмите предмет",
+]
+hubFloatingText = [
+  "§0 \n§l§aOldtralia Network",
+  "\n§1\n§eНовые режимы уже здесь!\n§2\n§aoldtralia.ru\n§3 ",
+]
+hubScoreboard = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fРанг: %s",
+  " §fДивизия: %s",
+  "§1",
+  " §fОнлайн: §a%s",
+  " §fИграют: §a%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+ffaScoreboardIdle = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fВаш пинг: §a%sмс",
+  " §fИграют: §a%s",
+  "§1",
+  " §fРежим: §a%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+ffaScoreboardCombat = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fВаш пинг: §a%sмс",
+  " §fПинг противника: §a%sмс",
+  "§1",
+  " §fБой: §a%sс",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardWaiting = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fПротивник: §e%s",
+  " §fРежим: %s",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardRunning = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fВаш пинг: §a%sмс",
+  " §fПинг противника: §a%sмс",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardRunningBoxing = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fУдары: %s(%s%s)",
+  "  §fВы: §a%s",
+  "  §fПротивник: §a%s",
+  "§2",
+  " §fВаш пинг: §a%sмс",
+  " §fПинг противника: §a%sмс",
+  "§3",
+  " §7oldtralia.ru",
+]
+duelsScoreboardEnd = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fИгра окончена!",
+  " §fПобедитель: §e%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+duelsScoreboardQueue = [
+  "§l§aOldtralia§r",
+  "§0",
+  " §fРежим: %s",
+  " §fПрошло времени: §a%s",
+  "§1",
+  " §fВ очередях: §a%s",
+  "§2",
+  " §7oldtralia.ru",
+]
+
+[ban]
+banExpiry = "%s дней, %s часов, %s минут"
+banNeverExpires = "никогда"
+banKick = "§cВы были забанены! §7(%s, %s)\n\n§fПричина: §c%s §7| §fРазбан: §c%s\n§fОспорить: §at.me/oldtralia"
+
+[ban_first]
+banExpiry = "%s дней, %s часов, %s минут"
+banNeverExpires = "никогда"
+banKick = "§cВы были забанены! §7(%s, §f%s§7)\n\n§fПричина: §c%s §7| §fРазбан: §c%s\n§fОспорить: §at.me/oldtralia"
+
+[cape]
+Oldtralia = "Oldtralia"
+Lunarelly = "Lunarelly"
+Birthday = "День рождения"
+Cake = "Торт"
+Enderman = "Странник края"
+Firework = "Феерверк"
+Iron_Golem = "Железный голем"
+Pickaxe = "Кирка"
+Green_Creeper = "Зелёный крипер"
+Red_Creeper = "Красный крипер"
+Turtle = "Черепаха"
+Migrator = "Мигратор"
+
+[cape_colored]
+Oldtralia = "§aOldtralia"
+Lunarelly = "§4Lunarelly"
+Birthday = "§dДень рождения"
+Cake = "§bТорт"
+Enderman = "§5Странник края"
+Firework = "§6Феерверк"
+Iron_Golem = "§8Железный голем"
+Pickaxe = "§9Кирка"
+Green_Creeper = "§2Зелёный крипер"
+Red_Creeper = "§cКрасный крипер"
+Turtle = "§2Черепаха"
+Migrator = "§cМигратор"
+
+[language]
+en = "Английский"
+ru = "Русский"
+
+[input_mode]
+"Keyboard & Mouse" = "Клавиатура и Мышь"
+Gamepad = "Геймпад"
+Touch = "Тач-скрин"
+Motion = "Движения"
+
+[anticheat]
+loginError = "§cОшибка входа §7(%s)\n§fКод: §e%s"
+inGameError = "§cИгровая ошибка §7(%s)\n§fКод: §e%s"
+
+[potion_color]
+Red = "Красный"
+Dark_Red = "Тёмно-красный"
+Blue = "Синий"
+Light_Blue = "Голубой"
+Green = "Зелёный"
+Purple = "Фиолетовый"
+Yellow = "Жёлтый"
+White = "Белый"
+Black = "Чёрный"
+
+[potion_color_colored]
+Red = "§cКрасный"
+Dark_Red = "§4Тёмно-красный"
+Blue = "§9Синий"
+Light_Blue = "§bГолубой"
+Green = "§aЗелёный"
+Purple = "§dФиолетовый"
+Yellow = "§eЖёлтый"
+White = "§fБелый"
+Black = "§0Чёрный"
