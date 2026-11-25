@@ -1,0 +1,8 @@
+{
+    "modes": ["nodebuff", "classic_nodebuff", "boxing", "soup", "fist", "gapple"],
+    "name": "Soccer",
+    "spawns": [
+        {"x": 295.5, "y": 30, "z": 175.5, "yaw": 0, "pitch": 0},
+        {"x": 295.5, "y": 30, "z": 215.5, "yaw": 180, "pitch": 0}
+    ]
+}

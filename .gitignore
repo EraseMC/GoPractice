@@ -1,0 +1,11 @@
+/bin/
+/test.toml
+/ops.txt
+/nethernet/
+/players/
+.env
+.idea/
+
+**/db/LOCK
+**/db/LOG
+**/db/LOG.old

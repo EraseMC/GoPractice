@@ -1,0 +1,8 @@
+{
+    "modes": ["nodebuff", "classic_nodebuff", "boxing", "soup", "fist", "gapple"],
+    "name": "Pokemon",
+    "spawns": [
+        {"x": 274.5, "y": 21, "z": 301.5, "yaw": 270, "pitch": 0},
+        {"x": 362.5, "y": 21, "z": 301.5, "yaw": 90, "pitch": 0}
+    ]
+}

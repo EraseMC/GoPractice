@@ -1,0 +1,43 @@
+
+[Network]
+  Address = ":19132"
+  Transport = ["raknet"]
+
+  [Network.NetherNet]
+    Address = ""
+    Domain = "oldtralia.ru"
+    KeyFile = "nethernet/nethernet.key"
+    PublicAddress = ""
+    UDPPorts = "19134"
+
+[Players]
+  DisableSwimming = false
+  Folder = "players"
+  MaxCount = 100
+  MaximumChunkRadius = 8
+  SaveData = false
+
+[Resources]
+  AutoBuildPack = false
+  Folder = "resource_packs"
+  Required = true
+
+[Server]
+  AuthEnabled = true
+  DisableJoinQuitMessages = true
+  MuteEmoteChat = true
+  Name = "§l§aOldtralia"
+  OperatorsFile = ""
+
+[World]
+  DisableBlockTicks = true
+  DisableEnd = true
+  DisableFireTick = true
+  DisableHopperTick = true
+  DisableNether = true
+  DisableRedstoneTick = true
+  DisableSubChunkRequests = true
+  DisableVanillaRecipes = true
+  Folder = "worlds/lobby"
+  RandomTickSpeed = -1
+  SaveData = false

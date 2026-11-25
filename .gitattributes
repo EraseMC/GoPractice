@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+worlds/** binary
+duels/**/map/** binary
+
+*.ldb binary
+*.dat binary
+*.png binary
+*.zip binary
+*.ogg binary
