@@ -41,6 +41,20 @@ type Services struct {
 	InCombat        func(o *state.Online) bool
 	IsSpectator     func(o *state.Online) bool
 	HasRespawnDelay func(o *state.Online) bool
+	InFFA           func(o *state.Online) bool
+	InDuel          func(o *state.Online) bool
+	InQueue         func(o *state.Online) bool
+	LeaveFFA        func(o *state.Online, p *player.Player, tx *world.Tx)
+	Hub             Hub
+	TransferAddress func(p *player.Player) string
+}
+
+type Hub interface {
+	Reset(o *state.Online, p *player.Player, tx *world.Tx)
+	Teleport(p *player.Player, tx *world.Tx)
+	SendSettings(p *player.Player)
+	SendInfo(p *player.Player)
+	SendRules(p *player.Player)
 }
 
 func (s *Services) RankOf(xuid string) string {

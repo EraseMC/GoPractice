@@ -15,6 +15,7 @@ import (
 	"github.com/EraseMC/GoPractice/internal/rcon"
 	"github.com/EraseMC/GoPractice/internal/state"
 	"github.com/EraseMC/GoPractice/internal/text"
+	"github.com/EraseMC/GoPractice/internal/toggles"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
@@ -39,7 +40,9 @@ func (a *App) setupCommands() {
 				a.stop()
 			}
 		},
-		RankChanged: a.rankChanged,
+		RankChanged:     a.rankChanged,
+		Hub:             hubCommands{a},
+		TransferAddress: a.TransferAddress,
 	}
 	a.Commands = command.NewMap(svc)
 	a.Commands.Register(
@@ -57,6 +60,11 @@ func (a *App) setupCommands() {
 		command.ToggleChat(),
 		command.Teleport(),
 		command.Stop(),
+		command.Spawn(),
+		command.Settings(),
+		command.Info(),
+		command.Rules(),
+		command.Reconnect(),
 	)
 
 	a.Net.OnRead(func(c *netmw.Conn, pk packet.Packet) bool {
@@ -190,4 +198,28 @@ func (a *App) updateNameTags() {
 			}
 		})
 	}
+}
+
+type hubCommands struct {
+	a *App
+}
+
+func (h hubCommands) Reset(o *state.Online, p *player.Player, tx *world.Tx) {
+	h.a.Hub.Reset(o, p, tx)
+}
+
+func (h hubCommands) Teleport(p *player.Player, tx *world.Tx) {
+	h.a.Hub.Teleport(p, tx)
+}
+
+func (h hubCommands) SendSettings(p *player.Player) {
+	h.a.Toggles.SendForm(p, toggles.NoBack)
+}
+
+func (h hubCommands) SendInfo(p *player.Player) {
+	h.a.Info.SendInfoForm(p, false)
+}
+
+func (h hubCommands) SendRules(p *player.Player) {
+	h.a.Info.SendRulesForm(p, false)
 }

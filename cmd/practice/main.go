@@ -4,7 +4,9 @@ import (
 	"context"
 	"flag"
 	"log/slog"
+	"net"
 	"os"
+	"strconv"
 
 	"github.com/EraseMC/GoPractice/internal/app"
 	"github.com/EraseMC/GoPractice/internal/config"
@@ -20,7 +22,6 @@ func main() {
 
 	path := flag.String("config", "config.toml", "config path")
 	envPath := flag.String("env", ".env", "env path")
-	demo := flag.Bool("demo", false, "send test form and scoreboard on join")
 	offline := flag.Bool("offline-xuid", false, "store players without Xbox auth under a name based XUID (testing only)")
 	flag.Parse()
 
@@ -53,16 +54,18 @@ func main() {
 	conf.Generator = func(world.Dimension) world.Generator { return world.NopGenerator{} }
 	conf.AcceptedProtocolsProvider = netver.Provider(netver.DefaultBlocked)
 	a.OfflineXUID = *offline
+	a.Port = listenPort(uc.Network.Address)
 	a.Configure(&conf)
-	if *demo {
-		installDemo(a)
-	}
 
 	srv := conf.New()
 	srv.CloseOnProgramEnd()
 	w := srv.World()
 	w.SetTime(1000)
 	w.StopTime()
+	if err := a.SetupWorld(w); err != nil {
+		log.Error("setup hub", "err", err)
+		os.Exit(1)
+	}
 
 	a.SetStop(func() { _ = srv.Close() })
 	a.Start(ctx)
@@ -72,4 +75,16 @@ func main() {
 		a.Join(p, p.Tx())
 		log.Info("player joined", "name", p.Name())
 	}
+}
+
+func listenPort(addr string) int {
+	_, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return 19132
+	}
+	n, err := strconv.Atoi(port)
+	if err != nil {
+		return 19132
+	}
+	return n
 }

@@ -8,15 +8,15 @@ import (
 
 func Move(tx *world.Tx, p *player.Player, w *world.World, pos mgl64.Vec3, yaw, pitch float64) {
 	if w == nil || tx.World() == w {
-		p.Teleport(pos)
 		Rotate(p, yaw, pitch)
+		p.Teleport(pos)
 		return
 	}
 	h := tx.RemoveEntity(p)
 	w.Do(func(tx *world.Tx) {
 		if np, ok := tx.AddEntityAt(h, pos).(*player.Player); ok {
-			np.Teleport(pos)
 			Rotate(np, yaw, pitch)
+			np.Teleport(pos)
 		}
 	})
 }

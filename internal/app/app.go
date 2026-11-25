@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,15 +15,21 @@ import (
 	"github.com/EraseMC/GoPractice/internal/config"
 	"github.com/EraseMC/GoPractice/internal/db"
 	"github.com/EraseMC/GoPractice/internal/handler"
+	"github.com/EraseMC/GoPractice/internal/hub"
+	"github.com/EraseMC/GoPractice/internal/info"
 	"github.com/EraseMC/GoPractice/internal/lang"
 	"github.com/EraseMC/GoPractice/internal/language"
 	"github.com/EraseMC/GoPractice/internal/netmw"
+	"github.com/EraseMC/GoPractice/internal/overall"
+	"github.com/EraseMC/GoPractice/internal/publicip"
 	"github.com/EraseMC/GoPractice/internal/punish"
 	"github.com/EraseMC/GoPractice/internal/rcon"
 	"github.com/EraseMC/GoPractice/internal/scheduler"
 	"github.com/EraseMC/GoPractice/internal/state"
+	"github.com/EraseMC/GoPractice/internal/stats"
 	"github.com/EraseMC/GoPractice/internal/store"
 	"github.com/EraseMC/GoPractice/internal/telegram"
+	"github.com/EraseMC/GoPractice/internal/toggles"
 	"github.com/EraseMC/GoPractice/internal/ui"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
@@ -47,8 +54,15 @@ type App struct {
 	Chat      *chat.Manager
 	Telegram  *telegram.Client
 	Commands  *command.Map
+	Toggles   *toggles.Manager
+	Stats     *stats.Manager
+	Info      *info.Manager
+	Hub       *hub.Manager
+	Overall   *overall.Handler
+	PublicIP  *publicip.Resolver
 
 	OfflineXUID bool
+	Port        int
 
 	OnJoin       []func(o *state.Online, p *player.Player, tx *world.Tx)
 	OnRankChange []func(o *state.Online)
@@ -107,10 +121,76 @@ func New(ctx context.Context, log *slog.Logger, envPath string) (*App, error) {
 	a.Punish = punish.New(bundle, st)
 	a.Chat = chat.New(log, bundle, st, players, a.Punish, a.Scheduler.Tick)
 	a.Telegram = telegram.New(log, env)
+	a.PublicIP = &publicip.Resolver{}
+	a.setupHub()
 	a.setupCommands()
 
 	a.Router.OnQuit(a.quit)
 	return a, nil
+}
+
+func (a *App) setupHub() {
+	a.Toggles = toggles.New(a.Lang, a.Store, a.Players, a.Forms)
+	a.Stats = stats.New(a.Lang, a.Store, a.Players, a.Forms)
+	a.Info = info.New(a.Lang, a.Players, a.Forms)
+	a.Hub = hub.New(hub.Deps{
+		Log:      a.Log,
+		Lang:     a.Lang,
+		Store:    a.Store,
+		Players:  a.Players,
+		Forms:    a.Forms,
+		Boards:   a.Boards,
+		Chat:     a.Chat,
+		Toggles:  a.Toggles,
+		Stats:    a.Stats,
+		Info:     a.Info,
+		Language: a.Language,
+	})
+	a.Overall = &overall.Handler{}
+
+	back := func(p *player.Player, _ *world.Tx) { a.Hub.SendPreferencesForm(p) }
+	a.Language.SetBack(back)
+	a.Toggles.Back = back
+	a.Info.Back = func(p *player.Player, _ *world.Tx) { a.Hub.SendMenuForm(p) }
+	a.Toggles.OnScoreboard = func(o *state.Online, p *player.Player, _ *world.Tx, enabled bool) {
+		if !enabled {
+			a.Boards.Remove(p)
+			return
+		}
+		if a.Hub.InHub(o) {
+			a.Hub.UpdateScoreboard(o)
+		}
+	}
+	a.Language.OnChange(func(p *player.Player, tx *world.Tx, _ lang.Lang) {
+		if o, ok := a.Players.Get(p.UUID()); ok {
+			a.Hub.LanguageChanged(o, p, tx)
+		}
+	})
+	a.OnRankChange = append(a.OnRankChange, func(o *state.Online) {
+		o.Do(func(_ *world.Tx, p *player.Player) {
+			a.Hub.CheckFly(o, p)
+		})
+	})
+
+	a.Net.OnRead(a.Toggles.Inbound)
+	a.Router.Add(a.Overall)
+	a.Router.Add(a.Hub.Handler())
+}
+
+func (a *App) SetupWorld(w *world.World) error {
+	return a.Hub.Setup(w)
+}
+
+func (a *App) TransferAddress(p *player.Player) string {
+	ip := a.PublicIP.Get()
+	if ip == "" {
+		host, _, err := net.SplitHostPort(p.ServerAddress())
+		if err != nil {
+			return ""
+		}
+		ip = host
+	}
+	return net.JoinHostPort(ip, strconv.Itoa(a.Port))
 }
 
 func (a *App) Configure(conf *server.Config) {
@@ -125,6 +205,10 @@ func (a *App) Start(ctx context.Context) {
 	ctx, a.cancel = context.WithCancel(ctx)
 	a.Scheduler.Repeat(1, a.Boards.Flush)
 	a.Scheduler.Repeat(20, a.updateNameTags)
+	a.Scheduler.Repeat(20, a.Hub.Tick)
+	a.Stats.UpdateTops()
+	a.Scheduler.Repeat(6000, a.Stats.UpdateTops)
+	go a.PublicIP.Resolve(ctx)
 	go a.Scheduler.Run(ctx)
 	a.startRcon()
 }
@@ -161,6 +245,11 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 	a.Punish.OnJoin(o.Name, o.XUID)
 	p.SetNameTag(a.Chat.NameTag(o))
 	a.SyncCommands(p)
+	a.Stats.Join(o)
+	guard := a.Hub.InventoryHandler(o.UUID)
+	p.Inventory().Handle(guard)
+	p.Armour().Handle(guard)
+	a.Hub.Join(o, p, tx)
 	for _, f := range a.OnJoin {
 		f(o, p, tx)
 	}
@@ -169,10 +258,13 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 
 func (a *App) quit(p *player.Player) {
 	if o, ok := a.Players.Remove(p.UUID()); ok {
+		a.Hub.Quit(o)
+		a.Stats.Quit(o)
 		a.Chat.Forget(o)
 		a.Punish.OnQuit(o.Name)
 		a.Commands.Forget(o.Name)
 	}
+	a.Toggles.Forget(p.UUID())
 	a.Forms.Reset(p.UUID())
 	a.Boards.Forget(p.UUID())
 }

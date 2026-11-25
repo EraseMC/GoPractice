@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/EraseMC/GoPractice/internal/netver"
@@ -84,51 +83,6 @@ func join(addr string, p minecraft.Protocol, uiWait time.Duration) error {
 	if script.send != "" {
 		return runScript(conn)
 	}
-	return nil
-}
-
-func runScript(conn *minecraft.Conn) error {
-	done := make(chan struct{})
-	go func() {
-		defer close(done)
-		for {
-			pk, err := conn.ReadPacket()
-			if err != nil {
-				return
-			}
-			switch pk := pk.(type) {
-			case *packet.Text:
-				fmt.Printf("      text[%d]: %q\n", pk.TextType, pk.Message)
-			case *packet.AvailableCommands:
-				fmt.Printf("      commands (%d):", len(pk.Commands))
-				for _, c := range pk.Commands {
-					fmt.Printf(" %s", c.Name)
-				}
-				fmt.Println()
-				for _, c := range pk.Commands {
-					fmt.Printf("        /%s %q overloads=%d\n", c.Name, c.Description, len(c.Overloads))
-				}
-			case *packet.SetActorData:
-				if v, ok := pk.EntityMetadata[protocol.EntityDataKeyName]; ok && pk.EntityRuntimeID == conn.GameData().EntityRuntimeID {
-					fmt.Printf("      nametag: %q\n", v)
-				}
-			}
-		}
-	}()
-	time.Sleep(time.Second)
-	for _, line := range strings.Split(script.send, "|") {
-		if strings.HasPrefix(line, "/") {
-			fmt.Printf("    > command %q\n", line)
-			_ = conn.WritePacket(&packet.CommandRequest{CommandLine: line, CommandOrigin: protocol.CommandOrigin{Origin: protocol.CommandOriginPlayer, UUID: uuid.New()}})
-		} else {
-			fmt.Printf("    > chat %q\n", line)
-			_ = conn.WritePacket(&packet.Text{TextType: packet.TextTypeChat, SourceName: conn.IdentityData().DisplayName, Message: line, XUID: conn.IdentityData().XUID})
-		}
-		time.Sleep(script.gap)
-	}
-	time.Sleep(script.stay)
-	_ = conn.Close()
-	<-done
 	return nil
 }
 

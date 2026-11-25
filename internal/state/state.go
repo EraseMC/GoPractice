@@ -16,7 +16,8 @@ import (
 type Place int
 
 const (
-	PlaceHub Place = iota
+	PlaceNone Place = iota
+	PlaceHub
 	PlaceFFA
 	PlaceQueue
 	PlaceDuel
@@ -62,6 +63,12 @@ func (o *Online) Place() (Place, string) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
 	return o.place, o.arena
+}
+
+func (o *Online) In(p Place) bool {
+	o.mu.Lock()
+	defer o.mu.Unlock()
+	return o.place == p
 }
 
 func (o *Online) SetPlace(p Place, arena string) {
