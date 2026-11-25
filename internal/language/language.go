@@ -41,12 +41,19 @@ func (m *Manager) OnChange(f func(p *player.Player, tx *world.Tx, l lang.Lang)) 
 	m.mu.Unlock()
 }
 
+func (m *Manager) xuid(p *player.Player) string {
+	if o, ok := m.players.Get(p.UUID()); ok {
+		return o.XUID
+	}
+	return p.XUID()
+}
+
 func ClientLocale(p *player.Player) string {
 	return strings.ReplaceAll(p.Locale().String(), "-", "_")
 }
 
 func (m *Manager) Of(p *player.Player) lang.Lang {
-	if prof, ok := m.store.ByXUID(p.XUID()); ok {
+	if prof, ok := m.store.ByXUID(m.xuid(p)); ok {
 		if l, ok := lang.Parse(prof.Locale); ok {
 			return l
 		}
@@ -81,7 +88,7 @@ func (m *Manager) Set(p *player.Player, l lang.Lang) {
 		m.log.Error("Undefined language: " + string(l))
 		return
 	}
-	m.store.Update(p.XUID(), func(prof *store.Profile) { prof.Locale = string(l) })
+	m.store.Update(m.xuid(p), func(prof *store.Profile) { prof.Locale = string(l) })
 	if o, ok := m.players.Get(p.UUID()); ok {
 		o.SetLang(l)
 	}

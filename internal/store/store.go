@@ -42,6 +42,13 @@ func newStore() *Store {
 	}
 }
 
+func NewMemory() *Store {
+	s := newStore()
+	s.Punishments = &Punishments{}
+	s.sink = func(db.Query, string) {}
+	return s
+}
+
 func Load(ctx context.Context, d *sql.DB) (*Store, error) {
 	s := newStore()
 	if err := s.loadPlayers(ctx, d); err != nil {

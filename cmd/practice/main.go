@@ -21,6 +21,7 @@ func main() {
 	path := flag.String("config", "config.toml", "config path")
 	envPath := flag.String("env", ".env", "env path")
 	demo := flag.Bool("demo", false, "send test form and scoreboard on join")
+	offline := flag.Bool("offline-xuid", false, "store players without Xbox auth under a name based XUID (testing only)")
 	flag.Parse()
 
 	ctx := context.Background()
@@ -51,6 +52,7 @@ func main() {
 	conf.WorldProvider = lobby.Provider()
 	conf.Generator = func(world.Dimension) world.Generator { return world.NopGenerator{} }
 	conf.AcceptedProtocolsProvider = netver.Provider(netver.DefaultBlocked)
+	a.OfflineXUID = *offline
 	a.Configure(&conf)
 	if *demo {
 		installDemo(a)
@@ -62,7 +64,9 @@ func main() {
 	w.SetTime(1000)
 	w.StopTime()
 
+	a.SetStop(func() { _ = srv.Close() })
 	a.Start(ctx)
+	go a.Console(os.Stdin)
 	srv.Listen()
 	for p := range srv.Accept() {
 		a.Join(p, p.Tx())

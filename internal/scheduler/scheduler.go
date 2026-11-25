@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"math"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -27,6 +28,55 @@ type Scheduler struct {
 	mu    sync.Mutex
 	tasks []*Task
 	tick  atomic.Uint64
+
+	statMu  sync.Mutex
+	last    time.Time
+	tps     [20]float64
+	use     [20]float64
+	samples int
+}
+
+type Stats struct {
+	TPS, TickUsage, AverageTPS, AverageTickUsage float64
+}
+
+func (s *Scheduler) Stats() Stats {
+	s.statMu.Lock()
+	defer s.statMu.Unlock()
+	if s.samples == 0 {
+		return Stats{TPS: 20, AverageTPS: 20}
+	}
+	cur := (s.samples - 1) % len(s.tps)
+	n := min(s.samples, len(s.tps))
+	var sumTPS, sumUse float64
+	for i := 0; i < n; i++ {
+		sumTPS += s.tps[i]
+		sumUse += s.use[i]
+	}
+	return Stats{
+		TPS:              round2(s.tps[cur]),
+		TickUsage:        round2(s.use[cur] * 100),
+		AverageTPS:       round2(sumTPS / float64(n)),
+		AverageTickUsage: round2(sumUse / float64(n) * 100),
+	}
+}
+
+func (s *Scheduler) record(start time.Time, work time.Duration) {
+	s.statMu.Lock()
+	defer s.statMu.Unlock()
+	interval := TickDuration.Seconds()
+	if !s.last.IsZero() {
+		interval = start.Sub(s.last).Seconds()
+	}
+	s.last = start
+	i := s.samples % len(s.tps)
+	s.tps[i] = min(20, 1/max(0.001, interval))
+	s.use[i] = min(1, work.Seconds()/TickDuration.Seconds())
+	s.samples++
+}
+
+func round2(f float64) float64 {
+	return math.Round(f*100) / 100
 }
 
 func New(log *slog.Logger) *Scheduler {
@@ -62,7 +112,9 @@ func (s *Scheduler) Run(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
+			start := time.Now()
 			s.step()
+			s.record(start, time.Since(start))
 		}
 	}
 }

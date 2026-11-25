@@ -184,6 +184,19 @@ func (p *Punishments) RemoveMutes(nickname string) {
 	p.persist("DELETE FROM mutes WHERE nickname = ?", nickname)
 }
 
+func (p *Punishments) RemoveMutesByXUID(xuid string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	kept := p.mutes[:0]
+	for _, m := range p.mutes {
+		if m.XUID != xuid {
+			kept = append(kept, m)
+		}
+	}
+	p.mutes = kept
+	p.persist("DELETE FROM mutes WHERE xuid = ?", xuid)
+}
+
 func (p *Punishments) RenameMutes(xuid, nickname string) {
 	p.mu.Lock()
 	defer p.mu.Unlock()

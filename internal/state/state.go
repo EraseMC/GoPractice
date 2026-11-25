@@ -9,6 +9,8 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/google/uuid"
+	"github.com/sandertv/gophertunnel/minecraft/protocol"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
 type Place int
@@ -27,6 +29,12 @@ type Online struct {
 	Name   string
 	Handle *world.EntityHandle
 	Conn   *netmw.Conn
+
+	DeviceOS    protocol.DeviceOS
+	DeviceModel string
+	GameVersion string
+
+	sendMu sync.Mutex
 
 	mu    sync.Mutex
 	lang  lang.Lang
@@ -62,6 +70,40 @@ func (o *Online) SetPlace(p Place, arena string) {
 	o.mu.Unlock()
 }
 
+func (o *Online) InputMode() uint32 {
+	if o.Conn == nil {
+		return packet.InputModeUndefined
+	}
+	return o.Conn.InputMode()
+}
+
+func (o *Online) Ping() int64 {
+	if o.Conn == nil {
+		return 0
+	}
+	return (o.Conn.Latency() * 2).Milliseconds()
+}
+
+func (o *Online) Message(msg string) {
+	o.send(&packet.Text{TextType: packet.TextTypeSystem, Message: msg})
+}
+
+func (o *Online) Raw(msg string) {
+	o.send(&packet.Text{TextType: packet.TextTypeRaw, Message: msg})
+}
+
+func (o *Online) send(pk packet.Packet) {
+	if o.Conn != nil {
+		o.sendMu.Lock()
+		_ = o.Conn.WritePacket(pk)
+		o.sendMu.Unlock()
+		return
+	}
+	o.Do(func(_ *world.Tx, p *player.Player) {
+		p.SendPacket(pk)
+	})
+}
+
 func (o *Online) Do(f func(tx *world.Tx, p *player.Player)) {
 	o.Handle.Do(func(tx *world.Tx, e world.Entity) {
 		if p, ok := e.(*player.Player); ok {
@@ -81,8 +123,15 @@ func NewPlayers() *Players {
 	return &Players{byUUID: map[uuid.UUID]*Online{}, byName: map[string]*Online{}}
 }
 
-func (s *Players) Add(p *player.Player, conn *netmw.Conn, l lang.Lang) *Online {
-	o := &Online{UUID: p.UUID(), XUID: p.XUID(), Name: p.Name(), Handle: p.H(), Conn: conn, lang: l}
+func (s *Players) Add(p *player.Player, xuid string, conn *netmw.Conn, l lang.Lang) *Online {
+	o := &Online{UUID: p.UUID(), XUID: xuid, Name: p.Name(), Handle: p.H(), Conn: conn, lang: l}
+	if conn != nil {
+		cd := conn.ClientData()
+		o.DeviceOS, o.DeviceModel, o.GameVersion = cd.DeviceOS, cd.DeviceModel, cd.GameVersion
+	} else {
+		o.DeviceOS = protocol.DeviceUnknown
+		o.DeviceModel = p.DeviceModel()
+	}
 	s.mu.Lock()
 	if old, ok := s.byUUID[o.UUID]; ok {
 		s.removeLocked(old)

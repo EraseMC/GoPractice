@@ -9,6 +9,7 @@ import (
 type Router struct {
 	mu   sync.RWMutex
 	quit []func(p *player.Player)
+	chat []func(ctx *player.Context, message *string)
 }
 
 func NewRouter() *Router {
@@ -21,10 +22,22 @@ func (r *Router) OnQuit(f func(p *player.Player)) {
 	r.mu.Unlock()
 }
 
+func (r *Router) OnChat(f func(ctx *player.Context, message *string)) {
+	r.mu.Lock()
+	r.chat = append(r.chat, f)
+	r.mu.Unlock()
+}
+
 func (r *Router) quitHooks() []func(p *player.Player) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.quit
+}
+
+func (r *Router) chatHooks() []func(ctx *player.Context, message *string) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return r.chat
 }
 
 func (r *Router) Handler() *Handler {
@@ -34,6 +47,15 @@ func (r *Router) Handler() *Handler {
 type Handler struct {
 	player.NopHandler
 	r *Router
+}
+
+func (h *Handler) HandleChat(ctx *player.Context, message *string) {
+	for _, f := range h.r.chatHooks() {
+		f(ctx, message)
+		if ctx.Cancelled() {
+			return
+		}
+	}
 }
 
 func (h *Handler) HandleQuit(p *player.Player) {

@@ -28,6 +28,26 @@ type Conn struct {
 
 	valuesMu sync.Mutex
 	values   map[string]any
+
+	pendingMu sync.Mutex
+	pending   []packet.Packet
+}
+
+func (c *Conn) Inject(pk packet.Packet) {
+	c.pendingMu.Lock()
+	c.pending = append(c.pending, pk)
+	c.pendingMu.Unlock()
+}
+
+func (c *Conn) popPending() (packet.Packet, bool) {
+	c.pendingMu.Lock()
+	defer c.pendingMu.Unlock()
+	if len(c.pending) == 0 {
+		return nil, false
+	}
+	pk := c.pending[0]
+	c.pending = c.pending[1:]
+	return pk, true
 }
 
 func newConn(c session.Conn, m *Middleware) *Conn {
@@ -68,6 +88,9 @@ func (c *Conn) SetValue(key string, v any) {
 
 func (c *Conn) ReadPacket() (packet.Packet, error) {
 	for {
+		if pk, ok := c.popPending(); ok {
+			return pk, nil
+		}
 		pk, err := c.Conn.ReadPacket()
 		if err != nil {
 			return nil, err

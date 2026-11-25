@@ -6,17 +6,23 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"strings"
 	"time"
 
+	"github.com/EraseMC/GoPractice/internal/chat"
+	"github.com/EraseMC/GoPractice/internal/command"
 	"github.com/EraseMC/GoPractice/internal/config"
 	"github.com/EraseMC/GoPractice/internal/db"
 	"github.com/EraseMC/GoPractice/internal/handler"
 	"github.com/EraseMC/GoPractice/internal/lang"
 	"github.com/EraseMC/GoPractice/internal/language"
 	"github.com/EraseMC/GoPractice/internal/netmw"
+	"github.com/EraseMC/GoPractice/internal/punish"
+	"github.com/EraseMC/GoPractice/internal/rcon"
 	"github.com/EraseMC/GoPractice/internal/scheduler"
 	"github.com/EraseMC/GoPractice/internal/state"
 	"github.com/EraseMC/GoPractice/internal/store"
+	"github.com/EraseMC/GoPractice/internal/telegram"
 	"github.com/EraseMC/GoPractice/internal/ui"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
@@ -37,10 +43,19 @@ type App struct {
 	Boards    *ui.Scoreboards
 	Router    *handler.Router
 	Language  *language.Manager
+	Punish    *punish.Manager
+	Chat      *chat.Manager
+	Telegram  *telegram.Client
+	Commands  *command.Map
 
-	OnJoin []func(o *state.Online, p *player.Player, tx *world.Tx)
+	OfflineXUID bool
+
+	OnJoin       []func(o *state.Online, p *player.Player, tx *world.Tx)
+	OnRankChange []func(o *state.Online)
 
 	cancel context.CancelFunc
+	stop   func()
+	rcon   *rcon.Server
 }
 
 func New(ctx context.Context, log *slog.Logger, envPath string) (*App, error) {
@@ -89,6 +104,10 @@ func New(ctx context.Context, log *slog.Logger, envPath string) (*App, error) {
 		Router:    handler.NewRouter(),
 	}
 	a.Language = language.New(log, bundle, st, players, forms)
+	a.Punish = punish.New(bundle, st)
+	a.Chat = chat.New(log, bundle, st, players, a.Punish, a.Scheduler.Tick)
+	a.Telegram = telegram.New(log, env)
+	a.setupCommands()
 
 	a.Router.OnQuit(a.quit)
 	return a, nil
@@ -98,10 +117,16 @@ func (a *App) Configure(conf *server.Config) {
 	conf.Listeners = a.Net.Wrap(conf.Listeners)
 }
 
+func (a *App) SetStop(f func()) {
+	a.stop = f
+}
+
 func (a *App) Start(ctx context.Context) {
 	ctx, a.cancel = context.WithCancel(ctx)
 	a.Scheduler.Repeat(1, a.Boards.Flush)
+	a.Scheduler.Repeat(20, a.updateNameTags)
 	go a.Scheduler.Run(ctx)
+	a.startRcon()
 }
 
 func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
@@ -112,7 +137,11 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 	}
 
 	l := lang.FromLocale(locale)
-	if xuid := p.XUID(); xuid != "" {
+	xuid := p.XUID()
+	if xuid == "" && a.OfflineXUID {
+		xuid = "offline-" + strings.ToLower(p.Name())
+	}
+	if xuid != "" {
 		prof := a.Store.Login(store.Identity{
 			XUID:     xuid,
 			Name:     p.Name(),
@@ -127,8 +156,11 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 		a.Log.Warn("player has no XUID, profile is not stored", "name", p.Name())
 	}
 
-	o := a.Players.Add(p, conn, l)
+	o := a.Players.Add(p, xuid, conn, l)
 	p.Handle(a.Router.Handler())
+	a.Punish.OnJoin(o.Name, o.XUID)
+	p.SetNameTag(a.Chat.NameTag(o))
+	a.SyncCommands(p)
 	for _, f := range a.OnJoin {
 		f(o, p, tx)
 	}
@@ -136,7 +168,11 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 }
 
 func (a *App) quit(p *player.Player) {
-	a.Players.Remove(p.UUID())
+	if o, ok := a.Players.Remove(p.UUID()); ok {
+		a.Chat.Forget(o)
+		a.Punish.OnQuit(o.Name)
+		a.Commands.Forget(o.Name)
+	}
 	a.Forms.Reset(p.UUID())
 	a.Boards.Forget(p.UUID())
 }
@@ -144,6 +180,9 @@ func (a *App) quit(p *player.Player) {
 func (a *App) Close() {
 	if a.cancel != nil {
 		a.cancel()
+	}
+	if a.rcon != nil {
+		_ = a.rcon.Close()
 	}
 	a.Pool.Close()
 	_ = a.SQL.Close()

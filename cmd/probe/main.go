@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/EraseMC/GoPractice/internal/netver"
@@ -18,7 +19,12 @@ func main() {
 	addr := flag.String("addr", "127.0.0.1:19132", "server address")
 	only := flag.Int("proto", 0, "probe only this protocol ID (0 = all)")
 	uiWait := flag.Duration("ui", 0, "after spawn, answer forms and report ui packets for this long")
+	name := flag.String("name", "", "display name (default probe<protocol>)")
+	send := flag.String("send", "", "lines to send after spawn separated by |, lines starting with / are commands")
+	gap := flag.Duration("gap", 2500*time.Millisecond, "delay between sent lines")
+	stay := flag.Duration("stay", 3*time.Second, "how long to stay after the last line")
 	flag.Parse()
+	script = scriptConf{name: *name, send: *send, gap: *gap, stay: *stay}
 
 	world.DefaultBlockRegistry.Finalize()
 	protocols, err := netver.Provider(netver.DefaultBlocked)(world.DefaultBlockRegistry)
@@ -46,9 +52,19 @@ func main() {
 	}
 }
 
+type scriptConf struct {
+	name, send string
+	gap, stay  time.Duration
+}
+
+var script scriptConf
+
 func join(addr string, p minecraft.Protocol, uiWait time.Duration) error {
 	d := minecraft.Dialer{Protocol: p}
 	d.IdentityData.DisplayName = fmt.Sprintf("probe%d", p.ID())
+	if script.name != "" {
+		d.IdentityData.DisplayName = script.name
+	}
 	d.DownloadResourcePack = func(uuid.UUID, string, int, int) bool { return true }
 	network := "raknet"
 	if p.ID() < 649 {
@@ -65,6 +81,54 @@ func join(addr string, p minecraft.Protocol, uiWait time.Duration) error {
 	if uiWait > 0 {
 		return watchUI(conn, uiWait)
 	}
+	if script.send != "" {
+		return runScript(conn)
+	}
+	return nil
+}
+
+func runScript(conn *minecraft.Conn) error {
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		for {
+			pk, err := conn.ReadPacket()
+			if err != nil {
+				return
+			}
+			switch pk := pk.(type) {
+			case *packet.Text:
+				fmt.Printf("      text[%d]: %q\n", pk.TextType, pk.Message)
+			case *packet.AvailableCommands:
+				fmt.Printf("      commands (%d):", len(pk.Commands))
+				for _, c := range pk.Commands {
+					fmt.Printf(" %s", c.Name)
+				}
+				fmt.Println()
+				for _, c := range pk.Commands {
+					fmt.Printf("        /%s %q overloads=%d\n", c.Name, c.Description, len(c.Overloads))
+				}
+			case *packet.SetActorData:
+				if v, ok := pk.EntityMetadata[protocol.EntityDataKeyName]; ok && pk.EntityRuntimeID == conn.GameData().EntityRuntimeID {
+					fmt.Printf("      nametag: %q\n", v)
+				}
+			}
+		}
+	}()
+	time.Sleep(time.Second)
+	for _, line := range strings.Split(script.send, "|") {
+		if strings.HasPrefix(line, "/") {
+			fmt.Printf("    > command %q\n", line)
+			_ = conn.WritePacket(&packet.CommandRequest{CommandLine: line, CommandOrigin: protocol.CommandOrigin{Origin: protocol.CommandOriginPlayer, UUID: uuid.New()}})
+		} else {
+			fmt.Printf("    > chat %q\n", line)
+			_ = conn.WritePacket(&packet.Text{TextType: packet.TextTypeChat, SourceName: conn.IdentityData().DisplayName, Message: line, XUID: conn.IdentityData().XUID})
+		}
+		time.Sleep(script.gap)
+	}
+	time.Sleep(script.stay)
+	_ = conn.Close()
+	<-done
 	return nil
 }
 
