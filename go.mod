@@ -2,7 +2,7 @@ module github.com/EraseMC/GoPractice
 
 go 1.26.5
 
-replace github.com/df-mc/dragonfly => github.com/SovaMC/dragonfly v0.0.0-20261116202018-d23cdeb01bf2
+replace github.com/df-mc/dragonfly => ../ref-go/dragonfly
 
 replace github.com/sandertv/gophertunnel => github.com/SovaMC/gophertunnel v1.57.1-0.20261116201941-8fd5b79ce0ce
 
@@ -10,6 +10,8 @@ replace github.com/shawtymarco/go-multiversion => github.com/SovaMC/go-multivers
 
 require (
 	github.com/df-mc/dragonfly v0.0.0-00010101000000-000000000000
+	github.com/df-mc/goleveldb v1.1.9
+	github.com/google/uuid v1.6.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/sandertv/gophertunnel v1.63.1-0.20261112122229-e2251a60f71d
 	github.com/shawtymarco/go-multiversion v0.0.0-00010101000000-000000000000
@@ -23,13 +25,11 @@ require (
 	github.com/df-mc/go-nethernet v1.0.27-0.20261104184408-4c06b550759d // indirect
 	github.com/df-mc/go-playfab/v2 v2.0.2 // indirect
 	github.com/df-mc/go-xsapi/v2 v2.0.3 // indirect
-	github.com/df-mc/goleveldb v1.1.9 // indirect
 	github.com/df-mc/jsonc v1.0.5 // indirect
 	github.com/df-mc/worldupgrader v1.0.22 // indirect
 	github.com/go-gl/mathgl v1.2.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/klauspost/compress v1.18.4 // indirect
 	github.com/pion/datachannel v1.6.3 // indirect
 	github.com/pion/dtls/v3 v3.1.15 // indirect
