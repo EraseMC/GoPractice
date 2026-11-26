@@ -37,6 +37,7 @@ import (
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
+	"github.com/df-mc/go-nethernet"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
@@ -351,6 +352,17 @@ func (a *App) Close() {
 
 func hostOf(addr net.Addr) string {
 	if addr == nil {
+		return ""
+	}
+	if nn, ok := addr.(*nethernet.Addr); ok {
+		if nn.SelectedCandidate != nil {
+			return nn.SelectedCandidate.Address
+		}
+		for _, c := range nn.Candidates {
+			if c.Address != "" {
+				return c.Address
+			}
+		}
 		return ""
 	}
 	host, _, err := net.SplitHostPort(addr.String())
