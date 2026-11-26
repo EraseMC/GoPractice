@@ -64,6 +64,7 @@ func main() {
 	w := srv.World()
 	w.SetTime(1000)
 	w.StopTime()
+	w.SetDefaultGameMode(world.GameModeAdventure)
 	if err := a.SetupWorld(w, filepath.Dir(uc.World.Folder)); err != nil {
 		log.Error("setup hub", "err", err)
 		os.Exit(1)
