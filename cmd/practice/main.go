@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	_ "time/tzdata"
 
 	"github.com/EraseMC/GoPractice/internal/app"
 	"github.com/EraseMC/GoPractice/internal/config"

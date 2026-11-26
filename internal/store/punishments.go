@@ -133,6 +133,27 @@ func (p *Punishments) RemoveBans(nickname string) {
 	p.persist("DELETE FROM bans WHERE nickname = ?", nickname)
 }
 
+func (p *Punishments) removeBansWhere(match func(Ban) bool, sql string, arg string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	kept := p.bans[:0]
+	for _, b := range p.bans {
+		if !match(b) {
+			kept = append(kept, b)
+		}
+	}
+	p.bans = kept
+	p.persist(sql, arg)
+}
+
+func (p *Punishments) RemoveBansByXUID(xuid string) {
+	p.removeBansWhere(func(b Ban) bool { return b.XUID == xuid }, "DELETE FROM bans WHERE xuid = ?", xuid)
+}
+
+func (p *Punishments) RemoveBansByDeviceID(deviceID string) {
+	p.removeBansWhere(func(b Ban) bool { return b.DeviceID == deviceID }, "DELETE FROM bans WHERE device_id = ?", deviceID)
+}
+
 func (p *Punishments) RenameBans(xuid, nickname string) {
 	p.mu.Lock()
 	defer p.mu.Unlock()

@@ -37,6 +37,7 @@ import (
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
@@ -242,6 +243,21 @@ func (a *App) TransferAddress(p *player.Player) string {
 
 func (a *App) Configure(conf *server.Config) {
 	conf.Listeners = a.Net.Wrap(conf.Listeners)
+	conf.Allower = allower{a}
+}
+
+type allower struct{ a *App }
+
+func (al allower) Allow(_ net.Addr, d login.IdentityData, c login.ClientData) (string, bool) {
+	msg, banned := al.a.Punish.BanKick(d.DisplayName, d.XUID, string(c.DeviceID), func() lang.Lang {
+		if l, ok := al.a.Language.ByXUID(d.XUID); ok {
+			if l, ok := lang.Parse(string(l)); ok {
+				return l
+			}
+		}
+		return lang.FromLocale(c.LanguageCode)
+	})
+	return msg, !banned
 }
 
 func (a *App) SetStop(f func()) {
