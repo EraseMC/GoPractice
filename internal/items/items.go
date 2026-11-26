@@ -24,6 +24,7 @@ import (
 	"github.com/df-mc/dragonfly/server/world/sound"
 	"github.com/go-gl/mathgl/mgl64"
 	"github.com/google/uuid"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
 const (
@@ -254,9 +255,9 @@ func (m *Manager) pearlHit(e *entity.Ent, tx *world.Tx, res trace.Result) {
 	oo, _ := m.combat.Online(own)
 	from := own.Position()
 	m.combat.Particle(tx, from, particle.EndermanTeleport{}, oo)
-	m.combat.Sound(tx, from, sound.Teleport{}, oo)
+	m.combat.LevelEvent(tx, from, packet.LevelEventSoundEndermanTeleport, oo)
 	own.Teleport(res.Position())
-	m.combat.Sound(tx, res.Position(), sound.Teleport{}, oo)
+	m.combat.LevelEvent(tx, res.Position(), packet.LevelEventSoundEndermanTeleport, oo)
 }
 
 func (m *Manager) splashHit(e *entity.Ent, tx *world.Tx, res trace.Result) {

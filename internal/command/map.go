@@ -45,6 +45,9 @@ type Services struct {
 	InDuel          func(o *state.Online) bool
 	InQueue         func(o *state.Online) bool
 	LeaveFFA        func(o *state.Online, p *player.Player, tx *world.Tx)
+	Rekit           func(o *state.Online, p *player.Player, tx *world.Tx)
+	SurrenderFFA    func(o *state.Online, p *player.Player, tx *world.Tx) bool
+	SurrenderDuel   func(o *state.Online, p *player.Player, tx *world.Tx) bool
 	Hub             Hub
 	TransferAddress func(p *player.Player) string
 }

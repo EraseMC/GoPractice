@@ -9,7 +9,9 @@ import (
 	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/go-gl/mathgl/mgl64"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
 type Viewer struct {
@@ -79,6 +81,22 @@ func (m *Manager) Sound(tx *world.Tx, pos mgl64.Vec3, s world.Sound, owner *stat
 		if m.CanSee(v.O, owner) {
 			v.V.ViewSound(pos, s)
 		}
+	}
+}
+
+func (m *Manager) LevelEvent(tx *world.Tx, pos mgl64.Vec3, event int32, owner *state.Online) {
+	pk := LevelEventPacket(pos, event)
+	for _, v := range m.Viewers(tx, pos) {
+		if m.CanSee(v.O, owner) {
+			v.P.SendPacket(pk)
+		}
+	}
+}
+
+func LevelEventPacket(pos mgl64.Vec3, event int32) *packet.LevelEvent {
+	return &packet.LevelEvent{
+		EventType: event,
+		Position:  mgl32.Vec3{float32(pos[0]), float32(pos[1]), float32(pos[2])},
 	}
 }
 

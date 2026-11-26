@@ -42,6 +42,12 @@ func (a *App) setupCommands() {
 		},
 		RankChanged:     a.rankChanged,
 		Hub:             hubCommands{a},
+		InFFA:           a.FFA.InFFA,
+		InCombat:        a.FFA.InCombat,
+		HasRespawnDelay: a.FFA.HasRespawnDelay,
+		LeaveFFA:        a.FFA.RemoveFromFFA,
+		Rekit:           func(o *state.Online, p *player.Player, _ *world.Tx) { a.FFA.ReKit(o, p) },
+		SurrenderFFA:    a.FFA.Surrender,
 		TransferAddress: a.TransferAddress,
 	}
 	a.Commands = command.NewMap(svc)
@@ -65,6 +71,8 @@ func (a *App) setupCommands() {
 		command.Info(),
 		command.Rules(),
 		command.Reconnect(),
+		command.ReKit(),
+		command.Surrender(),
 	)
 
 	a.Net.OnRead(func(c *netmw.Conn, pk packet.Packet) bool {
@@ -191,6 +199,8 @@ func (a *App) updateNameTags() {
 				}
 				p.SetNameTag(tag)
 				p.SetScoreTag("")
+			case state.PlaceFFA:
+				a.FFA.UpdateNameTag(o, p)
 			case state.PlaceDuel:
 			default:
 				p.SetNameTag(a.Chat.NameTag(o))

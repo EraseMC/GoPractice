@@ -15,6 +15,7 @@ import (
 	"github.com/EraseMC/GoPractice/internal/command"
 	"github.com/EraseMC/GoPractice/internal/config"
 	"github.com/EraseMC/GoPractice/internal/db"
+	"github.com/EraseMC/GoPractice/internal/ffa"
 	"github.com/EraseMC/GoPractice/internal/handler"
 	"github.com/EraseMC/GoPractice/internal/hub"
 	"github.com/EraseMC/GoPractice/internal/info"
@@ -64,6 +65,7 @@ type App struct {
 	Overall   *overall.Handler
 	Combat    *combat.Manager
 	Items     *items.Manager
+	FFA       *ffa.Manager
 	PublicIP  *publicip.Resolver
 
 	OfflineXUID bool
@@ -127,10 +129,9 @@ func New(ctx context.Context, log *slog.Logger, envPath string) (*App, error) {
 	a.Chat = chat.New(log, bundle, st, players, a.Punish, a.Scheduler.Tick)
 	a.Telegram = telegram.New(log, env)
 	a.PublicIP = &publicip.Resolver{}
+	a.Router.OnQuit(a.quit)
 	a.setupHub()
 	a.setupCommands()
-
-	a.Router.OnQuit(a.quit)
 	return a, nil
 }
 
@@ -154,6 +155,25 @@ func (a *App) setupHub() {
 	a.Overall = &overall.Handler{}
 	a.Combat = combat.New(a.Players, a.Toggles, a.Scheduler)
 	a.Items = items.New(a.Lang, a.Players, a.Combat)
+	a.FFA = ffa.New(ffa.Deps{
+		Log:     a.Log,
+		Lang:    a.Lang,
+		Players: a.Players,
+		Forms:   a.Forms,
+		Boards:  a.Boards,
+		Chat:    a.Chat,
+		Toggles: a.Toggles,
+		Stats:   a.Stats,
+		Combat:  a.Combat,
+		Items:   a.Items,
+		Hub:     a.Hub,
+	})
+	a.Combat.Profile = a.FFA.Profile
+	a.Combat.Enemy = a.FFA.EnemyName
+	a.Combat.InCombat = a.FFA.InCombat
+	a.Toggles.InCombat = a.FFA.InCombat
+	a.Hub.Fighting = a.FFA.Count
+	a.Hub.FFAForm = func(o *state.Online, p *player.Player, _ *world.Tx) { a.FFA.SendForm(o, p) }
 
 	back := func(p *player.Player, _ *world.Tx) { a.Hub.SendPreferencesForm(p) }
 	a.Language.SetBack(back)
@@ -185,6 +205,7 @@ func (a *App) setupHub() {
 	a.Router.Add(a.Items.Handler())
 	a.Router.Add(a.Overall)
 	a.Router.Add(a.Hub.Handler())
+	a.Router.Add(a.FFA.Handler())
 	a.Router.AddLast(a.Items.Tail())
 	a.Router.AddLast(a.Combat.Tail())
 }
@@ -200,8 +221,11 @@ func (a *App) swingInbound(c *netmw.Conn, pk packet.Packet) bool {
 	return true
 }
 
-func (a *App) SetupWorld(w *world.World) error {
-	return a.Hub.Setup(w)
+func (a *App) SetupWorld(w *world.World, worldsDir string) error {
+	if err := a.Hub.Setup(w); err != nil {
+		return err
+	}
+	return a.FFA.Load(worldsDir)
 }
 
 func (a *App) TransferAddress(p *player.Player) string {
@@ -230,6 +254,8 @@ func (a *App) Start(ctx context.Context) {
 	a.Scheduler.Repeat(1, a.Items.Tick)
 	a.Scheduler.Repeat(20, a.updateNameTags)
 	a.Scheduler.Repeat(20, a.Hub.Tick)
+	a.Scheduler.Repeat(20, a.FFA.Tick)
+	a.Scheduler.Repeat(20, a.FFA.RespawnTick)
 	a.Stats.UpdateTops()
 	a.Scheduler.Repeat(6000, a.Stats.UpdateTops)
 	go a.PublicIP.Resolve(ctx)
@@ -299,6 +325,9 @@ func (a *App) Close() {
 	}
 	if a.rcon != nil {
 		_ = a.rcon.Close()
+	}
+	if a.FFA != nil {
+		a.FFA.Close()
 	}
 	a.Pool.Close()
 	_ = a.SQL.Close()

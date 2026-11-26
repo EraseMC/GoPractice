@@ -121,6 +121,10 @@ func (m *Manager) World() *world.World {
 	return m.world
 }
 
+func (m *Manager) Spawn() mgl64.Vec3 {
+	return m.spawn
+}
+
 func (m *Manager) InHub(o *state.Online) bool {
 	return o.In(state.PlaceHub)
 }

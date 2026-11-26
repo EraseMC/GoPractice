@@ -70,6 +70,9 @@ func runScript(conn *minecraft.Conn) error {
 		time.Sleep(script.gap)
 	}
 	time.Sleep(script.stay)
+	_ = conn.WritePacket(&packet.Disconnect{Reason: packet.DisconnectReasonDisconnected})
+	_ = conn.Flush()
+	time.Sleep(200 * time.Millisecond)
 	_ = conn.Close()
 	<-done
 	return nil
@@ -102,6 +105,8 @@ func report(st *probeState, self uint64, pk packet.Packet) {
 		fmt.Printf("      add player %d %q at %v scale=%v name=%q\n", pk.EntityRuntimeID, pk.Username, pk.Position, pk.EntityMetadata[protocol.EntityDataKeyScale], pk.EntityMetadata[protocol.EntityDataKeyName])
 	case *packet.AddActor:
 		fmt.Printf("      add actor %d %s at %v name=%q\n", pk.EntityRuntimeID, pk.EntityType, pk.Position, pk.EntityMetadata[protocol.EntityDataKeyName])
+	case *packet.RemoveActor:
+		fmt.Printf("      remove actor %d\n", pk.EntityUniqueID)
 	case *packet.Emote:
 		fmt.Printf("      emote %d %s flags=%d\n", pk.EntityRuntimeID, pk.EmoteID, pk.Flags)
 	case *packet.MovePlayer:

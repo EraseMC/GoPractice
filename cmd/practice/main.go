@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/EraseMC/GoPractice/internal/app"
@@ -62,7 +63,7 @@ func main() {
 	w := srv.World()
 	w.SetTime(1000)
 	w.StopTime()
-	if err := a.SetupWorld(w); err != nil {
+	if err := a.SetupWorld(w, filepath.Dir(uc.World.Folder)); err != nil {
 		log.Error("setup hub", "err", err)
 		os.Exit(1)
 	}
