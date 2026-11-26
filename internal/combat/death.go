@@ -19,6 +19,7 @@ const (
 	corpseGravity   = 0.08
 	corpseDrag      = 0.02
 	corpseTicks     = 25
+	corpseLife      = 20
 	thunderSound    = "ambient.weather.thunder"
 )
 
@@ -46,6 +47,11 @@ func (m *Manager) spawnCorpse(tx *world.Tx, victim *player.Player, damager mgl64
 	corpse.SetNameTag("")
 	corpse.Handle(corpseHandler{})
 	corpse.Hurt(math.MaxFloat32, entity.VoidDamageSource{})
+	m.sched.After(corpseLife, func() {
+		h.Do(func(tx *world.Tx, e world.Entity) {
+			_ = tx.RemoveEntity(e).Close()
+		})
+	})
 	dx, dz := pos[0]-damager[0], pos[2]-damager[2]
 	f := math.Sqrt(dx*dx + dz*dz)
 	if f <= 0 {

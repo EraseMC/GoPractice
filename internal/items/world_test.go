@@ -305,4 +305,15 @@ func TestDeathAnimation(t *testing.T) {
 			t.Fatalf("corpses %d", corpses)
 		}
 	})
+
+	time.Sleep(30 * scheduler.TickDuration)
+	e.do(t, func(tx *world.Tx) {
+		n := 0
+		for range tx.Players() {
+			n++
+		}
+		if n != 2 {
+			t.Fatalf("corpse not removed, players in world %d", n)
+		}
+	})
 }
