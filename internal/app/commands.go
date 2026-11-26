@@ -3,6 +3,7 @@ package app
 import (
 	"bufio"
 	"io"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -31,10 +32,7 @@ func (a *App) setupCommands() {
 		Punish:   a.Punish,
 		Telegram: a.Telegram,
 		Started:  time.Now(),
-		Status: func() command.ServerStatus {
-			s := a.Scheduler.Stats()
-			return command.ServerStatus{TPS: s.TPS, TickUsage: s.TickUsage, AverageTPS: s.AverageTPS, AverageTickUsage: s.AverageTickUsage}
-		},
+		Status:   a.serverStatus,
 		Stop: func() {
 			if a.stop != nil {
 				a.stop()
@@ -232,4 +230,27 @@ func (h hubCommands) SendInfo(p *player.Player) {
 
 func (h hubCommands) SendRules(p *player.Player) {
 	h.a.Info.SendRulesForm(p, false)
+}
+
+func (a *App) serverStatus() command.ServerStatus {
+	s := a.Scheduler.Stats()
+	st := command.ServerStatus{TPS: s.TPS, TickUsage: s.TickUsage, AverageTPS: s.AverageTPS, AverageTickUsage: s.AverageTickUsage}
+	ws := []*world.World{a.Hub.World()}
+	for _, ar := range a.FFA.List() {
+		ws = append(ws, ar.World())
+	}
+	for _, w := range ws {
+		if w == nil {
+			continue
+		}
+		st.TPS = min(st.TPS, round2(w.TicksPerSecond()))
+		st.TickUsage = max(st.TickUsage, round2(w.TickUsage()))
+		st.AverageTPS = min(st.AverageTPS, round2(w.TicksPerSecondAverage()))
+		st.AverageTickUsage = max(st.AverageTickUsage, round2(w.TickUsageAverage()))
+	}
+	return st
+}
+
+func round2(f float64) float64 {
+	return math.Round(f*100) / 100
 }

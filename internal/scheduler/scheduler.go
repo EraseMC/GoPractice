@@ -30,7 +30,6 @@ type Scheduler struct {
 	tick  atomic.Uint64
 
 	statMu  sync.Mutex
-	last    time.Time
 	tps     [20]float64
 	use     [20]float64
 	samples int
@@ -61,16 +60,11 @@ func (s *Scheduler) Stats() Stats {
 	}
 }
 
-func (s *Scheduler) record(start time.Time, work time.Duration) {
+func (s *Scheduler) record(work time.Duration) {
 	s.statMu.Lock()
 	defer s.statMu.Unlock()
-	interval := TickDuration.Seconds()
-	if !s.last.IsZero() {
-		interval = start.Sub(s.last).Seconds()
-	}
-	s.last = start
 	i := s.samples % len(s.tps)
-	s.tps[i] = min(20, 1/max(0.001, interval))
+	s.tps[i] = min(20, 1/max(0.001, work.Seconds()))
 	s.use[i] = min(1, work.Seconds()/TickDuration.Seconds())
 	s.samples++
 }
@@ -130,7 +124,7 @@ func (s *Scheduler) Run(ctx context.Context) {
 		case <-ticker.C:
 			start := time.Now()
 			s.step()
-			s.record(start, time.Since(start))
+			s.record(time.Since(start))
 		}
 	}
 }
