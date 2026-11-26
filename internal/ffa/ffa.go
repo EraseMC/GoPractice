@@ -608,7 +608,7 @@ func (m *Manager) UpdateNameTag(o *state.Online, p *player.Player) {
 		p.SetScoreTag("")
 		return
 	}
-	p.SetScoreTag(fmt.Sprintf("§f%d", health(p)))
+	p.SetScoreTag(fmt.Sprintf("§f%d", health(p)))
 }
 
 func (m *Manager) Tick() {
