@@ -105,6 +105,10 @@ func report(st *probeState, self uint64, pk packet.Packet) {
 		fmt.Printf("      add player %d %q at %v scale=%v name=%q\n", pk.EntityRuntimeID, pk.Username, pk.Position, pk.EntityMetadata[protocol.EntityDataKeyScale], pk.EntityMetadata[protocol.EntityDataKeyName])
 	case *packet.AddActor:
 		fmt.Printf("      add actor %d %s at %v name=%q\n", pk.EntityRuntimeID, pk.EntityType, pk.Position, pk.EntityMetadata[protocol.EntityDataKeyName])
+	case *packet.PlayerList:
+		for _, e := range pk.Entries {
+			fmt.Printf("      playerlist action=%d %s %q uid=%d skin=%dB\n", e.ActionType, e.UUID, e.Username, e.EntityUniqueID, len(e.Skin.SkinData))
+		}
 	case *packet.RemoveActor:
 		fmt.Printf("      remove actor %d\n", pk.EntityUniqueID)
 	case *packet.Emote:
