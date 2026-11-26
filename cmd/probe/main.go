@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/EraseMC/GoPractice/internal/netver"
@@ -22,8 +24,9 @@ func main() {
 	send := flag.String("send", "", "lines to send after spawn separated by |, lines starting with / are commands")
 	gap := flag.Duration("gap", 2500*time.Millisecond, "delay between sent lines")
 	stay := flag.Duration("stay", 3*time.Second, "how long to stay after the last line")
+	countFor := flag.Duration("count", 0, "after spawn, count received packets by type for this long")
 	flag.Parse()
-	script = scriptConf{name: *name, send: *send, gap: *gap, stay: *stay}
+	script = scriptConf{name: *name, send: *send, gap: *gap, stay: *stay, count: *countFor}
 
 	world.DefaultBlockRegistry.Finalize()
 	protocols, err := netver.Provider(netver.DefaultBlocked)(world.DefaultBlockRegistry)
@@ -52,8 +55,8 @@ func main() {
 }
 
 type scriptConf struct {
-	name, send string
-	gap, stay  time.Duration
+	name, send       string
+	gap, stay, count time.Duration
 }
 
 var script scriptConf
@@ -76,6 +79,10 @@ func join(addr string, p minecraft.Protocol, uiWait time.Duration) error {
 	defer conn.Close()
 	if err := conn.DoSpawnTimeout(15 * time.Second); err != nil {
 		return fmt.Errorf("spawn: %w", err)
+	}
+	if script.count > 0 {
+		fmt.Printf("      startgame gamemode=%d worldgamemode=%d\n", conn.GameData().PlayerGameMode, conn.GameData().WorldGameMode)
+		return countPackets(conn, script.count)
 	}
 	if uiWait > 0 {
 		return watchUI(conn, uiWait)
@@ -117,6 +124,54 @@ func watchUI(conn *minecraft.Conn, wait time.Duration) error {
 	}
 	if forms < 2 || objectives == 0 || scores == 0 {
 		return fmt.Errorf("ui: forms=%d objectives=%d scores=%d", forms, objectives, scores)
+	}
+	return nil
+}
+
+func countPackets(conn *minecraft.Conn, d time.Duration) error {
+	_ = conn.SetReadDeadline(time.Now().Add(d))
+	type stat struct{ n, bytes int }
+	stats := map[string]*stat{}
+	for {
+		pk, err := conn.ReadPacket()
+		if err != nil {
+			break
+		}
+		name := fmt.Sprintf("%T", pk)
+		switch pk := pk.(type) {
+		case *packet.LevelEvent:
+			name = fmt.Sprintf("LevelEvent %d", pk.EventType)
+		case *packet.UpdateAttributes:
+			for _, a := range pk.Attributes {
+				name += " " + a.Name
+			}
+		case *packet.UpdateAbilities:
+			for _, l := range pk.AbilityData.Layers {
+				fmt.Printf("      abilities type=%d set=%b values=%b\n", l.Type, l.Abilities, l.Values)
+			}
+		case *packet.SetPlayerGameType:
+			fmt.Printf("      gametype %d\n", pk.GameType)
+		case *packet.GameRulesChanged:
+			fmt.Printf("      gamerules %+v\n", pk.GameRules)
+		}
+		st, ok := stats[name]
+		if !ok {
+			st = &stat{}
+			stats[name] = st
+		}
+		st.n++
+		buf := bytes.NewBuffer(nil)
+		pk.Marshal(protocol.NewWriter(buf, 0))
+		st.bytes += buf.Len()
+	}
+	names := make([]string, 0, len(stats))
+	for n := range stats {
+		names = append(names, n)
+	}
+	sort.Slice(names, func(i, j int) bool { return stats[names[i]].n > stats[names[j]].n })
+	sec := d.Seconds()
+	for _, n := range names {
+		fmt.Printf("      %-40s %6d  %7.1f/s  %8d B\n", n, stats[n].n, float64(stats[n].n)/sec, stats[n].bytes)
 	}
 	return nil
 }
