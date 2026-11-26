@@ -38,6 +38,7 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/df-mc/go-nethernet"
+	"github.com/sandertv/gophertunnel/minecraft"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
@@ -245,6 +246,16 @@ func (a *App) TransferAddress(p *player.Player) string {
 func (a *App) Configure(conf *server.Config) {
 	conf.Listeners = a.Net.Wrap(conf.Listeners)
 	conf.Allower = allower{a}
+	conf.StatusProvider = statusProvider{name: conf.Name, players: a.Players}
+}
+
+type statusProvider struct {
+	name    string
+	players *state.Players
+}
+
+func (s statusProvider) ServerStatus(_, maxPlayers int) minecraft.ServerStatus {
+	return minecraft.ServerStatus{ServerName: s.name, PlayerCount: s.players.Count(), MaxPlayers: maxPlayers}
 }
 
 type allower struct{ a *App }
