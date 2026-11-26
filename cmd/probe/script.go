@@ -22,6 +22,7 @@ type probeState struct {
 	form    uint32
 	hasForm bool
 	pos     mgl32.Vec3
+	live    map[uint64]string
 }
 
 func itemName(st protocol.ItemStack) string {
@@ -41,7 +42,7 @@ func short(s string) string {
 }
 
 func runScript(conn *minecraft.Conn) error {
-	st := &probeState{inv: map[uint32]protocol.ItemInstance{}, pos: conn.GameData().PlayerPosition}
+	st := &probeState{inv: map[uint32]protocol.ItemInstance{}, pos: conn.GameData().PlayerPosition, live: map[uint64]string{}}
 	self := conn.GameData().EntityRuntimeID
 	done := make(chan struct{})
 	go func() {
@@ -75,6 +76,12 @@ func runScript(conn *minecraft.Conn) error {
 	time.Sleep(200 * time.Millisecond)
 	_ = conn.Close()
 	<-done
+	st.mu.Lock()
+	fmt.Printf("    live entities at exit: %d\n", len(st.live))
+	for id, name := range st.live {
+		fmt.Printf("      live %d %s\n", id, name)
+	}
+	st.mu.Unlock()
 	return nil
 }
 
@@ -101,15 +108,22 @@ func report(st *probeState, self uint64, pk packet.Packet) {
 	case *packet.AddPlayer:
 		st.mu.Lock()
 		st.npc = pk.EntityRuntimeID
+		st.live[pk.EntityRuntimeID] = "player " + pk.Username
 		st.mu.Unlock()
 		fmt.Printf("      add player %d %q at %v scale=%v name=%q\n", pk.EntityRuntimeID, pk.Username, pk.Position, pk.EntityMetadata[protocol.EntityDataKeyScale], pk.EntityMetadata[protocol.EntityDataKeyName])
 	case *packet.AddActor:
+		st.mu.Lock()
+		st.live[pk.EntityRuntimeID] = pk.EntityType
+		st.mu.Unlock()
 		fmt.Printf("      add actor %d %s at %v name=%q\n", pk.EntityRuntimeID, pk.EntityType, pk.Position, pk.EntityMetadata[protocol.EntityDataKeyName])
 	case *packet.PlayerList:
 		for _, e := range pk.Entries {
 			fmt.Printf("      playerlist action=%d %s %q uid=%d skin=%dB\n", e.ActionType, e.UUID, e.Username, e.EntityUniqueID, len(e.Skin.SkinData))
 		}
 	case *packet.RemoveActor:
+		st.mu.Lock()
+		delete(st.live, uint64(pk.EntityUniqueID))
+		st.mu.Unlock()
 		fmt.Printf("      remove actor %d\n", pk.EntityUniqueID)
 	case *packet.Emote:
 		fmt.Printf("      emote %d %s flags=%d\n", pk.EntityRuntimeID, pk.EmoteID, pk.Flags)
