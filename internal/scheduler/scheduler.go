@@ -95,8 +95,24 @@ func (s *Scheduler) After(delay int, fn func()) *Task {
 	return s.add(0, uint64(max(1, delay)), fn)
 }
 
+func (s *Scheduler) Times(period, n int, fn func()) *Task {
+	t := &Task{period: uint64(max(1, period))}
+	count := 0
+	t.fn = func() {
+		count++
+		fn()
+		if count >= n {
+			t.Cancel()
+		}
+	}
+	return s.schedule(t, t.period)
+}
+
 func (s *Scheduler) add(period, delay uint64, fn func()) *Task {
-	t := &Task{period: period, fn: fn}
+	return s.schedule(&Task{period: period, fn: fn}, delay)
+}
+
+func (s *Scheduler) schedule(t *Task, delay uint64) *Task {
 	s.mu.Lock()
 	t.next = s.tick.Load() + delay
 	s.tasks = append(s.tasks, t)

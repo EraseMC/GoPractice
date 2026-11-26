@@ -13,6 +13,8 @@ import (
 
 type Router struct {
 	mu    sync.RWMutex
+	head  []player.Handler
+	tail  []player.Handler
 	parts []player.Handler
 }
 
@@ -22,8 +24,22 @@ func NewRouter() *Router {
 
 func (r *Router) Add(h player.Handler) {
 	r.mu.Lock()
-	r.parts = append(r.parts, h)
+	r.head = append(r.head, h)
+	r.rebuild()
 	r.mu.Unlock()
+}
+
+func (r *Router) AddLast(h player.Handler) {
+	r.mu.Lock()
+	r.tail = append(r.tail, h)
+	r.rebuild()
+	r.mu.Unlock()
+}
+
+func (r *Router) rebuild() {
+	parts := make([]player.Handler, 0, len(r.head)+len(r.tail))
+	parts = append(parts, r.head...)
+	r.parts = append(parts, r.tail...)
 }
 
 func (r *Router) OnQuit(f func(p *player.Player)) {
@@ -141,6 +157,18 @@ func (h *Handler) HandleItemUseOnEntity(ctx *player.Context, e world.Entity) {
 
 func (h *Handler) HandleAttackEntity(ctx *player.Context, e world.Entity, force, height *float64, critical *bool) {
 	h.each(ctx, func(part player.Handler) { part.HandleAttackEntity(ctx, e, force, height, critical) })
+}
+
+func (h *Handler) HandleItemConsume(ctx *player.Context, s item.Stack) {
+	h.each(ctx, func(part player.Handler) { part.HandleItemConsume(ctx, s) })
+}
+
+func (h *Handler) HandleKnockBack(ctx *player.Context, src mgl64.Vec3, force, height float64) {
+	h.each(ctx, func(part player.Handler) {
+		if k, ok := part.(player.KnockBackHandler); ok {
+			k.HandleKnockBack(ctx, src, force, height)
+		}
+	})
 }
 
 func (h *Handler) HandleItemDrop(ctx *player.Context, s item.Stack) {

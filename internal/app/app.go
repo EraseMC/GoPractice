@@ -11,12 +11,14 @@ import (
 	"time"
 
 	"github.com/EraseMC/GoPractice/internal/chat"
+	"github.com/EraseMC/GoPractice/internal/combat"
 	"github.com/EraseMC/GoPractice/internal/command"
 	"github.com/EraseMC/GoPractice/internal/config"
 	"github.com/EraseMC/GoPractice/internal/db"
 	"github.com/EraseMC/GoPractice/internal/handler"
 	"github.com/EraseMC/GoPractice/internal/hub"
 	"github.com/EraseMC/GoPractice/internal/info"
+	"github.com/EraseMC/GoPractice/internal/items"
 	"github.com/EraseMC/GoPractice/internal/lang"
 	"github.com/EraseMC/GoPractice/internal/language"
 	"github.com/EraseMC/GoPractice/internal/netmw"
@@ -34,6 +36,7 @@ import (
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
 type App struct {
@@ -59,6 +62,8 @@ type App struct {
 	Info      *info.Manager
 	Hub       *hub.Manager
 	Overall   *overall.Handler
+	Combat    *combat.Manager
+	Items     *items.Manager
 	PublicIP  *publicip.Resolver
 
 	OfflineXUID bool
@@ -147,6 +152,8 @@ func (a *App) setupHub() {
 		Language: a.Language,
 	})
 	a.Overall = &overall.Handler{}
+	a.Combat = combat.New(a.Players, a.Toggles, a.Scheduler)
+	a.Items = items.New(a.Lang, a.Players, a.Combat)
 
 	back := func(p *player.Player, _ *world.Tx) { a.Hub.SendPreferencesForm(p) }
 	a.Language.SetBack(back)
@@ -173,8 +180,24 @@ func (a *App) setupHub() {
 	})
 
 	a.Net.OnRead(a.Toggles.Inbound)
+	a.Net.OnRead(a.swingInbound)
+	a.Router.Add(a.Combat.Handler())
+	a.Router.Add(a.Items.Handler())
 	a.Router.Add(a.Overall)
 	a.Router.Add(a.Hub.Handler())
+	a.Router.AddLast(a.Items.Tail())
+	a.Router.AddLast(a.Combat.Tail())
+}
+
+func (a *App) swingInbound(c *netmw.Conn, pk packet.Packet) bool {
+	ev, ok := pk.(*packet.LevelSoundEvent)
+	if !ok || ev.SoundType != packet.SoundEventAttackNoDamage {
+		return true
+	}
+	if o, ok := a.Players.Get(c.UUID()); ok {
+		o.Do(func(tx *world.Tx, p *player.Player) { a.Combat.Swing(tx, p) })
+	}
+	return true
 }
 
 func (a *App) SetupWorld(w *world.World) error {
@@ -204,6 +227,7 @@ func (a *App) SetStop(f func()) {
 func (a *App) Start(ctx context.Context) {
 	ctx, a.cancel = context.WithCancel(ctx)
 	a.Scheduler.Repeat(1, a.Boards.Flush)
+	a.Scheduler.Repeat(1, a.Items.Tick)
 	a.Scheduler.Repeat(20, a.updateNameTags)
 	a.Scheduler.Repeat(20, a.Hub.Tick)
 	a.Stats.UpdateTops()

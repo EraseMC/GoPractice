@@ -18,6 +18,10 @@ func Raw(p *player.Player, msg string) {
 	p.Message(msg)
 }
 
+func ActionBar(p *player.Player, msg string) {
+	p.SendPacket(&packet.SetTitle{ActionType: packet.TitleActionSetActionBar, Text: msg})
+}
+
 func Title(p *player.Player, text, subtitle string) {
 	TitleTimed(p, text, subtitle, 10, 18, 10)
 }
