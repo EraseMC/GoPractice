@@ -128,3 +128,14 @@ func TestCosmeticsLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestOutboundSkinKeepsLocalAppearance(t *testing.T) {
+	m := &Manager{}
+	client := &netmw.Conn{}
+	if m.Outbound(client, &packet.PlayerSkin{UUID: client.UUID()}) {
+		t.Fatal("the client's own skin was overwritten")
+	}
+	if !m.Outbound(client, &packet.PlayerSkin{UUID: uuid.New()}) {
+		t.Fatal("another player's skin update was suppressed")
+	}
+}
