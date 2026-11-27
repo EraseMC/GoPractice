@@ -43,6 +43,7 @@ type Hooks struct {
 	QueueForm     func(o *state.Online, p *player.Player, tx *world.Tx)
 	FFAForm       func(o *state.Online, p *player.Player, tx *world.Tx)
 	CosmeticsForm func(o *state.Online, p *player.Player, tx *world.Tx)
+	OnReady       func(tx *world.Tx, p *player.Player)
 	InviteForm    func(from *state.Online, p *player.Player, to *state.Online, tx *world.Tx)
 }
 
@@ -170,19 +171,8 @@ type resetHealing struct{}
 func (resetHealing) HealingSource() {}
 
 func (m *Manager) HasFly(o *state.Online) bool {
-	return m.profile(o).Cosmetics.Fly
-}
-
-func (m *Manager) CheckFly(o *state.Online, p *player.Player) {
-	prof := m.profile(o)
-	if !prof.Cosmetics.Fly || rank.Has(prof.Rank, rank.CosmeticsFly) {
-		return
-	}
-	m.store.Update(o.XUID, func(p *store.Profile) { p.Cosmetics.Fly = false })
-	if p != nil {
-		p.StopFlying()
-		p.SetGameMode(gamemode.WithFlight(p.GameMode(), false))
-	}
+	p := m.profile(o)
+	return p.Cosmetics.Fly && rank.Has(p.Rank, rank.CosmeticsFly)
 }
 
 func (m *Manager) SetPlayerSettings(o *state.Online, p *player.Player, tx *world.Tx) {
@@ -264,6 +254,9 @@ func (m *Manager) Reset(o *state.Online, p *player.Player, tx *world.Tx) {
 	m.SendMenuItems(o, p)
 	m.UpdateScoreboard(o)
 	m.UpdateNameTag(o, p)
+	if m.OnReady != nil && tx.World() == m.world {
+		m.OnReady(tx, p)
+	}
 }
 
 func (m *Manager) floatingText(o *state.Online) string {
@@ -295,12 +288,14 @@ func (m *Manager) broadcast(msg string) {
 }
 
 func (m *Manager) Join(o *state.Online, p *player.Player, tx *world.Tx) {
-	m.CheckFly(o, nil)
 	m.SetPlayerSettings(o, p, tx)
 	m.SendMenuItems(o, p)
 	m.UpdateScoreboard(o)
 	m.UpdateNameTag(o, p)
 	m.UpdateFloatingText(o, p, tx)
+	if m.OnReady != nil && tx.World() == m.world {
+		m.OnReady(tx, p)
+	}
 
 	l := o.Lang()
 	o.Message(m.bundle.Textf(l, "joinMessage", m.players.Count()))

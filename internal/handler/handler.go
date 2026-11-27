@@ -7,6 +7,7 @@ import (
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
+	"github.com/df-mc/dragonfly/server/player/skin"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
 )
@@ -105,6 +106,10 @@ func (h *Handler) HandleMove(ctx *player.Context, newPos mgl64.Vec3, newRot cube
 
 func (h *Handler) HandleTeleport(ctx *player.Context, pos mgl64.Vec3) {
 	h.each(ctx, func(part player.Handler) { part.HandleTeleport(ctx, pos) })
+}
+
+func (h *Handler) HandleSkinChange(ctx *player.Context, s *skin.Skin) {
+	h.each(ctx, func(part player.Handler) { part.HandleSkinChange(ctx, s) })
 }
 
 func (h *Handler) HandleFoodLoss(ctx *player.Context, from int, to *int) {

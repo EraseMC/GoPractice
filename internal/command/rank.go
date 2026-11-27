@@ -20,14 +20,20 @@ func rconProtected(r string) bool {
 }
 
 func (s *Services) SetRank(target *state.Online, nickname, r string) {
+	apply := func(p *store.Profile) {
+		p.Rank = r
+		if s.CleanCosmetics != nil {
+			s.CleanCosmetics(p)
+		}
+	}
 	if target != nil {
-		s.Store.Update(target.XUID, func(p *store.Profile) { p.Rank = r })
+		s.Store.Update(target.XUID, apply)
 		if s.RankChanged != nil {
 			s.RankChanged(target)
 		}
 		return
 	}
-	s.Store.UpdateByNickname(nickname, func(p *store.Profile) { p.Rank = r })
+	s.Store.UpdateByNickname(nickname, apply)
 }
 
 func (s *Services) rankByNickname(nickname string) string {

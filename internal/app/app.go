@@ -14,6 +14,7 @@ import (
 	"github.com/EraseMC/GoPractice/internal/combat"
 	"github.com/EraseMC/GoPractice/internal/command"
 	"github.com/EraseMC/GoPractice/internal/config"
+	"github.com/EraseMC/GoPractice/internal/cosmetics"
 	"github.com/EraseMC/GoPractice/internal/db"
 	"github.com/EraseMC/GoPractice/internal/duel"
 	"github.com/EraseMC/GoPractice/internal/ffa"
@@ -35,6 +36,7 @@ import (
 	"github.com/EraseMC/GoPractice/internal/telegram"
 	"github.com/EraseMC/GoPractice/internal/toggles"
 	"github.com/EraseMC/GoPractice/internal/ui"
+	"github.com/EraseMC/GoPractice/internal/worlds"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -71,6 +73,7 @@ type App struct {
 	Items     *items.Manager
 	FFA       *ffa.Manager
 	Duel      *duel.Manager
+	Cosmetics *cosmetics.Manager
 	PublicIP  *publicip.Resolver
 
 	OfflineXUID bool
@@ -136,6 +139,19 @@ func New(ctx context.Context, log *slog.Logger, envPath string) (*App, error) {
 	a.PublicIP = &publicip.Resolver{}
 	a.Router.OnQuit(a.quit)
 	a.setupHub()
+	a.Cosmetics, err = cosmetics.New(cosmetics.Deps{
+		Lang: a.Lang, Store: a.Store, Players: a.Players, Forms: a.Forms, Hub: a.Hub,
+	})
+	if err != nil {
+		a.Close()
+		return nil, fmt.Errorf("load cosmetics: %w", err)
+	}
+	a.Hub.CosmeticsForm = a.Cosmetics.SendForm
+	a.Hub.OnReady = a.Cosmetics.Enter
+	a.Items.PotionColour = a.Cosmetics.PotionColour
+	a.Net.OnRead(a.Cosmetics.Inbound)
+	a.Net.OnWrite(a.Cosmetics.Outbound)
+	a.Router.Add(a.Cosmetics.Handler())
 	a.setupCommands()
 	return a, nil
 }
@@ -214,12 +230,6 @@ func (a *App) setupHub() {
 			a.Duel.Refresh(o, p)
 		}
 	})
-	a.OnRankChange = append(a.OnRankChange, func(o *state.Online) {
-		o.Do(func(_ *world.Tx, p *player.Player) {
-			a.Hub.CheckFly(o, p)
-		})
-	})
-
 	a.Net.OnRead(a.Toggles.Inbound)
 	a.Net.OnRead(a.swingInbound)
 	a.Router.Add(a.Combat.Handler())
@@ -250,7 +260,12 @@ func (a *App) SetupWorld(w *world.World, worldsDir string) error {
 	if err := a.FFA.Load(worldsDir); err != nil {
 		return err
 	}
-	return a.Duel.Load("duels")
+	if err := a.Duel.Load("duels"); err != nil {
+		return err
+	}
+	worlds.OnLeave(a.Cosmetics.Leave)
+	worlds.OnEnter(a.Cosmetics.Enter)
+	return nil
 }
 
 func (a *App) TransferAddress(p *player.Player) string {
@@ -343,6 +358,7 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 
 	o := a.Players.Add(p, xuid, conn, l)
 	p.Handle(a.Router.Handler())
+	a.Cosmetics.Join(o, p)
 	a.Punish.OnJoin(o.Name, o.XUID)
 	p.SetNameTag(a.Chat.NameTag(o))
 	a.SyncCommands(p)

@@ -37,6 +37,7 @@ type Services struct {
 
 	Status          func() ServerStatus
 	Stop            func()
+	CleanCosmetics  func(p *store.Profile)
 	RankChanged     func(o *state.Online)
 	InCombat        func(o *state.Online) bool
 	IsSpectator     func(o *state.Online) bool

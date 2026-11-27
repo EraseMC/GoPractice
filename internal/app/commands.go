@@ -39,6 +39,7 @@ func (a *App) setupCommands() {
 			}
 		},
 		RankChanged:     a.rankChanged,
+		CleanCosmetics:  a.Cosmetics.NormalizeProfile,
 		Hub:             hubCommands{a},
 		InFFA:           a.FFA.InFFA,
 		InCombat:        a.FFA.InCombat,
@@ -124,7 +125,12 @@ func (a *App) SyncCommands(p *player.Player) {
 
 func (a *App) rankChanged(o *state.Online) {
 	o.Do(func(_ *world.Tx, p *player.Player) {
-		p.SetNameTag(a.Chat.NameTag(o))
+		a.Cosmetics.RankChanged(o, p)
+		if a.Hub.InHub(o) {
+			a.Hub.UpdateNameTag(o, p)
+		} else {
+			p.SetNameTag(a.Chat.NameTag(o))
+		}
 		a.SyncCommands(p)
 	})
 	for _, f := range a.OnRankChange {

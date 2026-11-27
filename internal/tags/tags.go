@@ -2,7 +2,7 @@ package tags
 
 var (
 	Silver   = []string{"E-GIRL", "BESTWW", "GOD", "LIT", "LUNAR", "STARDUST", "CHOPPA", "CLOUTLORD"}
-	Golden   = []string{"OLDTRALIA", "JUGG", "FINESSE", "MEMPHIS", "LEANDOER", "CAPYBARA", "SHOOTA", "L", "W"}
+	Golden   = []string{"OLDTRALIA", "FINESSE", "MEMPHIS", "LEANDOER", "JUGG", "CAPYBARA", "SHOOTA", "L", "W"}
 	Platinum = []string{"SANTA", "TRIPPY", "MAFIA", "ALCOHOLIC", "BLATANT", "JUICY", "OG", "BROKE", "INDIAN", "GOAT", "INVALIDCOLOR"}
 )
 
