@@ -76,7 +76,7 @@ func main() {
 	srv.Listen()
 	for p := range srv.Accept() {
 		a.Join(p, p.Tx())
-		log.Info("player joined", "name", p.Name())
+		log.Info("player joined", "name", p.Name(), "transport", p.Addr().Network())
 	}
 }
 
