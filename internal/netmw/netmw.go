@@ -6,6 +6,7 @@ import (
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/session"
 	"github.com/google/uuid"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
@@ -14,6 +15,8 @@ type Inbound func(c *Conn, pk packet.Packet) bool
 type Outbound func(c *Conn, pk packet.Packet) bool
 
 type Middleware struct {
+	PrepareClientData func(login.IdentityData, login.ClientData) login.ClientData
+
 	mu    sync.RWMutex
 	in    []Inbound
 	out   []Outbound

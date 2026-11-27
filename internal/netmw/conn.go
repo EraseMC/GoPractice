@@ -6,6 +6,7 @@ import (
 
 	"github.com/df-mc/dragonfly/server/session"
 	"github.com/google/uuid"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 )
 
@@ -21,6 +22,7 @@ type Conn struct {
 	session.Conn
 	m          *Middleware
 	id         uuid.UUID
+	data       login.ClientData
 	protocol   int32
 	inputMode  atomic.Uint32
 	registered atomic.Bool
@@ -52,9 +54,18 @@ func (c *Conn) popPending() (packet.Packet, bool) {
 
 func newConn(c session.Conn, m *Middleware) *Conn {
 	w := &Conn{Conn: c, m: m, protocol: c.Proto().ID(), values: map[string]any{}}
-	w.id, _ = uuid.Parse(c.IdentityData().Identity)
-	w.inputMode.Store(uint32(c.ClientData().CurrentInputMode))
+	identity := c.IdentityData()
+	w.id, _ = uuid.Parse(identity.Identity)
+	w.data = c.ClientData()
+	if m.PrepareClientData != nil {
+		w.data = m.PrepareClientData(identity, w.data)
+	}
+	w.inputMode.Store(uint32(w.data.CurrentInputMode))
 	return w
+}
+
+func (c *Conn) ClientData() login.ClientData {
+	return c.data
 }
 
 func (c *Conn) UUID() uuid.UUID {

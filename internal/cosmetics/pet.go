@@ -186,6 +186,14 @@ func petMetadata(metadata protocol.EntityMetadata) {
 
 func (m *Manager) Outbound(c *netmw.Conn, pk packet.Packet) bool {
 	switch v := pk.(type) {
+	case *packet.PlayerList:
+		for i := range v.Entries {
+			if e := &v.Entries[i]; e.ActionType == protocol.PlayerListActionAdd {
+				prepareSkinPacket(&e.Skin)
+			}
+		}
+	case *packet.PlayerSkin:
+		prepareSkinPacket(&v.Skin)
 	case *packet.AddPlayer:
 		m.mu.Lock()
 		for _, p := range m.views[c] {
@@ -231,6 +239,11 @@ func (m *Manager) Outbound(c *netmw.Conn, pk packet.Packet) bool {
 		m.mu.Unlock()
 	}
 	return true
+}
+
+func prepareSkinPacket(s *protocol.Skin) {
+	s.FullID = s.SkinID
+	s.PrimaryUser = true
 }
 
 func (m *Manager) Inbound(c *netmw.Conn, pk packet.Packet) bool {

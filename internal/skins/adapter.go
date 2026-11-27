@@ -3,6 +3,7 @@ package skins
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"image"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/df-mc/dragonfly/server/player/skin"
 	"github.com/sandertv/gophertunnel/minecraft/protocol"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 )
 
 var vanillaHashes = map[string]struct{}{
@@ -62,15 +64,48 @@ func NewAdapter(fsys fs.FS) (*Adapter, error) {
 }
 
 func (a *Adapter) Adapt(s skin.Skin) skin.Skin {
-	if s.Persona || s.Premium || s.PersonaCapeOnClassic || s.ModelConfig.Default == "" || a.invalid(s) {
+	if a.needsFallback(s) {
 		return a.fallback
 	}
 	return s
 }
 
+func (a *Adapter) AdaptLogin(data login.ClientData) login.ClientData {
+	var s skin.Skin
+	if validSize(data.SkinImageWidth, data.SkinImageHeight) {
+		s = skin.New(data.SkinImageWidth, data.SkinImageHeight)
+		s.Pix, _ = base64.StdEncoding.DecodeString(data.SkinData)
+	}
+	patch, _ := base64.StdEncoding.DecodeString(data.SkinResourcePatch)
+	s.ModelConfig, _ = skin.DecodeModelConfig(patch)
+	s.Persona, s.Premium, s.PersonaCapeOnClassic = data.PersonaSkin, data.PremiumSkin, data.CapeOnClassicSkin
+	if !a.needsFallback(s) {
+		return data
+	}
+	f := a.fallback
+	data.SkinID = f.FullID
+	data.SkinImageWidth, data.SkinImageHeight = f.Bounds().Dx(), f.Bounds().Dy()
+	data.SkinData = base64.StdEncoding.EncodeToString(f.Pix)
+	data.SkinResourcePatch = base64.StdEncoding.EncodeToString(f.ModelConfig.Encode())
+	data.SkinGeometry = base64.StdEncoding.EncodeToString([]byte("{}"))
+	data.SkinGeometryVersion, data.SkinAnimationData, data.ProfileHash = "", "", ""
+	data.PersonaSkin, data.PremiumSkin, data.CapeOnClassicSkin = false, false, false
+	data.PersonaPieces, data.PieceTintColours, data.AnimatedImageData = nil, nil, nil
+	data.ArmSize = "wide"
+	return data
+}
+
+func (a *Adapter) needsFallback(s skin.Skin) bool {
+	return s.Persona || s.Premium || s.PersonaCapeOnClassic || s.ModelConfig.Default == "" || a.invalid(s)
+}
+
+func validSize(w, h int) bool {
+	return w == 64 && (h == 32 || h == 64) || w == 128 && h == 128
+}
+
 func (a *Adapter) invalid(s skin.Skin) bool {
 	w, h := s.Bounds().Dx(), s.Bounds().Dy()
-	if !((w == 64 && (h == 32 || h == 64)) || (w == 128 && h == 128)) || len(s.Pix) != w*h*4 {
+	if !validSize(w, h) || len(s.Pix) != w*h*4 {
 		return true
 	}
 	if _, vanilla := vanillaHashes[fmt.Sprintf("%x", sha256.Sum256(s.Pix))]; vanilla {

@@ -1,6 +1,7 @@
 package cosmetics
 
 import (
+	"encoding/base64"
 	"fmt"
 	"image/color"
 	"io/fs"
@@ -21,6 +22,7 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/skin"
 	"github.com/google/uuid"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 )
 
 var capes = []string{"Oldtralia", "Lunarelly", "Birthday", "Cake", "Enderman", "Firework", "Iron_Golem", "Pickaxe", "Green_Creeper", "Red_Creeper", "Turtle", "Migrator"}
@@ -125,7 +127,21 @@ func (m *Manager) NormalizeProfile(profile *store.Profile) {
 
 func (m *Manager) Join(o *state.Online, p *player.Player) {
 	m.Store.Update(o.XUID, m.NormalizeProfile)
-	p.SetSkin(p.Skin())
+	if o.Conn == nil || p.Skin().CapeID != m.profile(o).Cosmetics.Cape {
+		p.SetSkin(p.Skin())
+	}
+}
+
+func (m *Manager) PrepareClientData(xuid string, data login.ClientData) login.ClientData {
+	data = m.adapter.AdaptLogin(data)
+	p, _ := m.Store.ByXUID(xuid)
+	m.NormalizeProfile(&p)
+	cape := m.capeImages[p.Cosmetics.Cape]
+	data.CapeID = p.Cosmetics.Cape
+	data.CapeImageWidth, data.CapeImageHeight = cape.Bounds().Dx(), cape.Bounds().Dy()
+	data.CapeData = base64.StdEncoding.EncodeToString(cape.Pix)
+	data.ProfileHash = ""
+	return data
 }
 
 func (m *Manager) RankChanged(o *state.Online, p *player.Player) {
@@ -163,6 +179,7 @@ func (m *Manager) skin(o *state.Online, s skin.Skin) skin.Skin {
 	p := m.profile(o)
 	s.Cape = skin.Cape{}
 	s.CapeID = ""
+	s.ProfileHash = ""
 	if cape, ok := m.capeImages[p.Cosmetics.Cape]; ok && rank.Has(p.Rank, rank.CosmeticsCapes) {
 		s.Cape = cape
 		s.CapeID = p.Cosmetics.Cape

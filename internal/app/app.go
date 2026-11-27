@@ -149,6 +149,9 @@ func New(ctx context.Context, log *slog.Logger, envPath string) (*App, error) {
 	a.Hub.CosmeticsForm = a.Cosmetics.SendForm
 	a.Hub.OnReady = a.Cosmetics.Enter
 	a.Items.PotionColour = a.Cosmetics.PotionColour
+	a.Net.PrepareClientData = func(id login.IdentityData, data login.ClientData) login.ClientData {
+		return a.Cosmetics.PrepareClientData(a.profileXUID(id.XUID, id.DisplayName), data)
+	}
 	a.Net.OnRead(a.Cosmetics.Inbound)
 	a.Net.OnWrite(a.Cosmetics.Outbound)
 	a.Router.Add(a.Cosmetics.Handler())
@@ -337,10 +340,7 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 	}
 
 	l := lang.FromLocale(locale)
-	xuid := p.XUID()
-	if xuid == "" && a.OfflineXUID {
-		xuid = "offline-" + strings.ToLower(p.Name())
-	}
+	xuid := a.profileXUID(p.XUID(), p.Name())
 	if xuid != "" {
 		prof := a.Store.Login(store.Identity{
 			XUID:     xuid,
@@ -371,6 +371,13 @@ func (a *App) Join(p *player.Player, tx *world.Tx) *state.Online {
 		f(o, p, tx)
 	}
 	return o
+}
+
+func (a *App) profileXUID(xuid, name string) string {
+	if xuid == "" && a.OfflineXUID {
+		return "offline-" + strings.ToLower(name)
+	}
+	return xuid
 }
 
 func (a *App) quit(p *player.Player) {
