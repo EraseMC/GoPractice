@@ -15,6 +15,7 @@ import (
 	"github.com/EraseMC/GoPractice/internal/command"
 	"github.com/EraseMC/GoPractice/internal/config"
 	"github.com/EraseMC/GoPractice/internal/db"
+	"github.com/EraseMC/GoPractice/internal/duel"
 	"github.com/EraseMC/GoPractice/internal/ffa"
 	"github.com/EraseMC/GoPractice/internal/handler"
 	"github.com/EraseMC/GoPractice/internal/hub"
@@ -69,6 +70,7 @@ type App struct {
 	Combat    *combat.Manager
 	Items     *items.Manager
 	FFA       *ffa.Manager
+	Duel      *duel.Manager
 	PublicIP  *publicip.Resolver
 
 	OfflineXUID bool
@@ -171,11 +173,25 @@ func (a *App) setupHub() {
 		Items:   a.Items,
 		Hub:     a.Hub,
 	})
-	a.Combat.Profile = a.FFA.Profile
+	a.Duel = duel.New(duel.Deps{
+		Log: a.Log, Lang: a.Lang, Players: a.Players, Forms: a.Forms, Boards: a.Boards,
+		Chat: a.Chat, Toggles: a.Toggles, Stats: a.Stats, Combat: a.Combat, Items: a.Items, Hub: a.Hub,
+	})
+	a.Overall.AllowHunger = a.Duel.AllowsHunger
+	a.Overall.AllowDrop = a.Duel.AllowsDrop
+	a.Hub.InQueue = a.Duel.InQueue
+	a.Hub.QueueForm = a.Duel.QueueForm
+	a.Hub.InviteForm = a.Duel.InviteForm
+	a.Combat.Profile = func(o *state.Online, p *player.Player) combat.Profile {
+		if profile, ok := duel.Profile(o); ok {
+			return profile
+		}
+		return a.FFA.Profile(o, p)
+	}
 	a.Combat.Enemy = a.FFA.EnemyName
 	a.Combat.InCombat = a.FFA.InCombat
 	a.Toggles.InCombat = a.FFA.InCombat
-	a.Hub.Fighting = a.FFA.Count
+	a.Hub.Fighting = func() int { return a.FFA.Count() + a.Duel.Count() }
 	a.Hub.FFAForm = func(o *state.Online, p *player.Player, _ *world.Tx) { a.FFA.SendForm(o, p) }
 
 	back := func(p *player.Player, _ *world.Tx) { a.Hub.SendPreferencesForm(p) }
@@ -190,10 +206,12 @@ func (a *App) setupHub() {
 		if a.Hub.InHub(o) {
 			a.Hub.UpdateScoreboard(o)
 		}
+		a.Duel.Refresh(o, p)
 	}
 	a.Language.OnChange(func(p *player.Player, tx *world.Tx, _ lang.Lang) {
 		if o, ok := a.Players.Get(p.UUID()); ok {
 			a.Hub.LanguageChanged(o, p, tx)
+			a.Duel.Refresh(o, p)
 		}
 	})
 	a.OnRankChange = append(a.OnRankChange, func(o *state.Online) {
@@ -206,6 +224,7 @@ func (a *App) setupHub() {
 	a.Net.OnRead(a.swingInbound)
 	a.Router.Add(a.Combat.Handler())
 	a.Router.Add(a.Items.Handler())
+	a.Router.Add(a.Duel.Handler())
 	a.Router.Add(a.Overall)
 	a.Router.Add(a.Hub.Handler())
 	a.Router.Add(a.FFA.Handler())
@@ -228,7 +247,10 @@ func (a *App) SetupWorld(w *world.World, worldsDir string) error {
 	if err := a.Hub.Setup(w); err != nil {
 		return err
 	}
-	return a.FFA.Load(worldsDir)
+	if err := a.FFA.Load(worldsDir); err != nil {
+		return err
+	}
+	return a.Duel.Load("duels")
 }
 
 func (a *App) TransferAddress(p *player.Player) string {
@@ -283,6 +305,7 @@ func (a *App) Start(ctx context.Context) {
 	a.Scheduler.Repeat(20, a.updateNameTags)
 	a.Scheduler.Repeat(20, a.Hub.Tick)
 	a.Scheduler.Repeat(20, a.FFA.Tick)
+	a.Scheduler.Repeat(20, a.Duel.Tick)
 	a.Scheduler.Repeat(20, a.FFA.RespawnTick)
 	a.Stats.UpdateTops()
 	a.Scheduler.Repeat(6000, a.Stats.UpdateTops)
@@ -353,6 +376,9 @@ func (a *App) Close() {
 	}
 	if a.rcon != nil {
 		_ = a.rcon.Close()
+	}
+	if a.Duel != nil {
+		a.Duel.Close()
 	}
 	if a.FFA != nil {
 		a.FFA.Close()

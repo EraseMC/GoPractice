@@ -46,6 +46,10 @@ func (a *App) setupCommands() {
 		LeaveFFA:        a.FFA.RemoveFromFFA,
 		Rekit:           func(o *state.Online, p *player.Player, _ *world.Tx) { a.FFA.ReKit(o, p) },
 		SurrenderFFA:    a.FFA.Surrender,
+		InDuel:          func(o *state.Online) bool { return o.In(state.PlaceDuel) },
+		InQueue:         a.Duel.InQueue,
+		SurrenderDuel:   a.Duel.Surrender,
+		Duel:            a.Duel.Command,
 		TransferAddress: a.TransferAddress,
 	}
 	a.Commands = command.NewMap(svc)
@@ -71,6 +75,7 @@ func (a *App) setupCommands() {
 		command.Reconnect(),
 		command.ReKit(),
 		command.Surrender(),
+		command.Duel(),
 	)
 
 	a.Net.OnRead(func(c *netmw.Conn, pk packet.Packet) bool {

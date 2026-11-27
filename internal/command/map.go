@@ -42,6 +42,7 @@ type Services struct {
 	IsSpectator     func(o *state.Online) bool
 	HasRespawnDelay func(o *state.Online) bool
 	InFFA           func(o *state.Online) bool
+	Duel            func(o *state.Online, p *player.Player, tx *world.Tx, args []string)
 	InDuel          func(o *state.Online) bool
 	InQueue         func(o *state.Online) bool
 	LeaveFFA        func(o *state.Online, p *player.Player, tx *world.Tx)

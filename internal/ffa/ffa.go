@@ -671,7 +671,7 @@ func (m *Manager) SendForm(o *state.Online, p *player.Player) {
 		if data == nil || *data < 0 || *data >= len(m.arenas) {
 			return
 		}
-		if !m.Hub.InHub(o) {
+		if !m.Hub.InHub(o) || m.Hub.InQueue != nil && m.Hub.InQueue(o) {
 			return
 		}
 		a := m.arenas[*data]

@@ -88,17 +88,22 @@ func tool(it world.Item) item.Stack {
 	return enchanted(item.NewStack(it, 1), true, item.NewEnchantment(enchantment.Unbreaking, 10))
 }
 
+func GiveNoDebuffKit(p *player.Player) {
+	inv := p.Inventory()
+	p.Armour().Set(armour(item.ArmourTierDiamond{}, true, 10))
+	_, _ = inv.AddItem(tool(item.Sword{Tier: item.ToolTierDiamond}))
+	_, _ = inv.AddItem(item.NewStack(item.EnderPearl{}, 16))
+	pot := item.NewStack(item.SplashPotion{Type: potion.StrongHealing()}, 1)
+	for i := 0; i <= inv.Size()-2; i++ {
+		_, _ = inv.AddItem(pot)
+	}
+}
+
 func (a *Arena) GiveKit(p *player.Player) {
 	inv := p.Inventory()
 	switch a.Kind {
 	case NoDebuff:
-		p.Armour().Set(armour(item.ArmourTierDiamond{}, true, 10))
-		_, _ = inv.AddItem(tool(item.Sword{Tier: item.ToolTierDiamond}))
-		_, _ = inv.AddItem(item.NewStack(item.EnderPearl{}, 16))
-		pot := item.NewStack(item.SplashPotion{Type: potion.StrongHealing()}, 1)
-		for i := 0; i <= inv.Size()-2; i++ {
-			_, _ = inv.AddItem(pot)
-		}
+		GiveNoDebuffKit(p)
 		p.AddEffect(lasting(effect.Speed, 1))
 	case Soup:
 		p.Armour().Set(armour(item.ArmourTierIron{}, true, 10))
