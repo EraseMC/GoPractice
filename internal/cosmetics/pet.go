@@ -186,8 +186,6 @@ func petMetadata(metadata protocol.EntityMetadata) {
 
 func (m *Manager) Outbound(c *netmw.Conn, pk packet.Packet) bool {
 	switch v := pk.(type) {
-	case *packet.PlayerSkin:
-		return v.UUID != c.UUID()
 	case *packet.AddPlayer:
 		m.mu.Lock()
 		for _, p := range m.views[c] {

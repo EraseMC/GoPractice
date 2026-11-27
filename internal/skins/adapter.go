@@ -9,6 +9,7 @@ import (
 	"io/fs"
 
 	"github.com/df-mc/dragonfly/server/player/skin"
+	"github.com/sandertv/gophertunnel/minecraft/protocol"
 )
 
 var vanillaHashes = map[string]struct{}{
@@ -28,6 +29,7 @@ func NewAdapter(fsys fs.FS) (*Adapter, error) {
 		return nil, err
 	}
 	fallback.FullID = "Oldtralia_Default"
+	fallback.ArmSize = protocol.ArmSizeWide
 	data, err := fs.ReadFile(fsys, "skins/default.geo.json")
 	if err != nil {
 		return nil, err

@@ -76,11 +76,10 @@ func New(d Deps) (*Manager, error) {
 		if err != nil {
 			return nil, err
 		}
-		b := image.Bounds()
 		if len(image.Pix) != 8192 {
 			return nil, fmt.Errorf("invalid cape image size for %s", name)
 		}
-		cape := skin.NewCape(b.Dx(), b.Dy())
+		cape := skin.NewCape(32, 64)
 		copy(cape.Pix, image.Pix)
 		m.capeImages[name] = cape
 	}

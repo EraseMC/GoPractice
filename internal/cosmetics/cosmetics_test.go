@@ -1,6 +1,7 @@
 package cosmetics
 
 import (
+	"image"
 	"io"
 	"log/slog"
 	"testing"
@@ -55,7 +56,7 @@ func TestCosmeticsLifecycle(t *testing.T) {
 			profile.Cosmetics = store.Cosmetics{Cape: "Oldtralia", Tag: "GOAT", Fly: true, PotionColor: "Dark_Red", Capybara: true}
 		})
 		m.Join(o, p)
-		if p.Skin().FullID != "Oldtralia_Default" || len(p.Skin().Cape.Pix) != 8192 {
+		if p.Skin().FullID != "Oldtralia_Default" || p.Skin().Cape.Bounds() != image.Rect(0, 0, 32, 64) || len(p.Skin().Cape.Pix) != 8192 {
 			t.Error("expected default skin with the selected cape")
 		}
 		persona := skin.New(64, 64)
@@ -126,16 +127,5 @@ func TestCosmeticsLifecycle(t *testing.T) {
 		}
 	}).Wait(t.Context()); err != nil {
 		t.Fatal(err)
-	}
-}
-
-func TestOutboundSkinKeepsLocalAppearance(t *testing.T) {
-	m := &Manager{}
-	client := &netmw.Conn{}
-	if m.Outbound(client, &packet.PlayerSkin{UUID: client.UUID()}) {
-		t.Fatal("the client's own skin was overwritten")
-	}
-	if !m.Outbound(client, &packet.PlayerSkin{UUID: uuid.New()}) {
-		t.Fatal("another player's skin update was suppressed")
 	}
 }
